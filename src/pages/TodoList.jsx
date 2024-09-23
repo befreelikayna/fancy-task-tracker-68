@@ -9,19 +9,19 @@ const TodoList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Load tasks from localStorage on component mount
     const savedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
     setTasks(savedTasks);
   }, []);
 
   useEffect(() => {
-    // Save tasks to localStorage whenever tasks change
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
 
   const addTask = () => {
     if (newTask.trim()) {
-      setTasks([...tasks, { id: Date.now(), title: newTask, completed: false }]);
+      const currentDate = new Date();
+      const formattedDate = currentDate.toLocaleString();
+      setTasks([...tasks, { id: Date.now(), title: newTask, date: formattedDate, completed: false }]);
       setNewTask('');
     }
   };
@@ -86,9 +86,12 @@ const TodoList = () => {
                 >
                   <CheckCircle size={24} />
                 </motion.button>
-                <span className={`text-gray-800 ${task.completed ? 'line-through' : ''}`}>
-                  {task.title}
-                </span>
+                <div className="flex flex-col">
+                  <span className={`text-gray-800 ${task.completed ? 'line-through' : ''}`}>
+                    {task.title}
+                  </span>
+                  <span className="text-sm text-gray-500">{task.date}</span>
+                </div>
               </div>
               <motion.button
                 whileHover={{ scale: 1.1 }}
