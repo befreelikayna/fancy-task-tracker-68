@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Upload } from 'lucide-react';
+import { ArrowLeft, Upload, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LiveBackground from '../components/LiveBackground';
 import * as XLSX from 'xlsx';
@@ -8,6 +8,7 @@ import * as XLSX from 'xlsx';
 const TodaysDeliveries = () => {
   const [deliveries, setDeliveries] = useState([]);
   const [newDelivery, setNewDelivery] = useState({ show: '', shot: '', dep: '', lead: '', eta: '' });
+  const [selectedDeliveries, setSelectedDeliveries] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,6 +56,17 @@ const TodaysDeliveries = () => {
     reader.readAsBinaryString(file);
   };
 
+  const handleCheckboxChange = (id) => {
+    setSelectedDeliveries(prev => 
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
+
+  const deleteSelectedDeliveries = () => {
+    setDeliveries(prev => prev.filter(delivery => !selectedDeliveries.includes(delivery.id)));
+    setSelectedDeliveries([]);
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden">
       <LiveBackground />
@@ -78,7 +90,7 @@ const TodaysDeliveries = () => {
               name="show"
               value={newDelivery.show}
               onChange={handleInputChange}
-              className="w-full sm:w-1/5 p-2 sm:p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white placeholder-white text-sm sm:text-base"
+              className="w-full sm:w-1/6 p-2 sm:p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white placeholder-white text-sm sm:text-base"
             />
             <input
               type="text"
@@ -86,7 +98,7 @@ const TodaysDeliveries = () => {
               name="shot"
               value={newDelivery.shot}
               onChange={handleInputChange}
-              className="w-full sm:w-1/5 p-2 sm:p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white placeholder-white text-sm sm:text-base"
+              className="w-full sm:w-1/6 p-2 sm:p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white placeholder-white text-sm sm:text-base"
             />
             <input
               type="text"
@@ -94,7 +106,7 @@ const TodaysDeliveries = () => {
               name="dep"
               value={newDelivery.dep}
               onChange={handleInputChange}
-              className="w-full sm:w-1/5 p-2 sm:p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white placeholder-white text-sm sm:text-base"
+              className="w-full sm:w-1/6 p-2 sm:p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white placeholder-white text-sm sm:text-base"
             />
             <input
               type="text"
@@ -102,14 +114,14 @@ const TodaysDeliveries = () => {
               name="lead"
               value={newDelivery.lead}
               onChange={handleInputChange}
-              className="w-full sm:w-1/5 p-2 sm:p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white placeholder-white text-sm sm:text-base"
+              className="w-full sm:w-1/6 p-2 sm:p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white placeholder-white text-sm sm:text-base"
             />
             <input
               type="date"
               name="eta"
               value={newDelivery.eta}
               onChange={handleInputChange}
-              className="w-full sm:w-1/5 p-2 sm:p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white text-sm sm:text-base"
+              className="w-full sm:w-1/6 p-2 sm:p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white text-sm sm:text-base"
             />
             <button
               onClick={addDelivery}
@@ -129,10 +141,22 @@ const TodaysDeliveries = () => {
             </label>
           </div>
 
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={deleteSelectedDeliveries}
+              className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition duration-300 text-sm sm:text-base flex items-center"
+              disabled={selectedDeliveries.length === 0}
+            >
+              <Trash2 size={16} className="mr-2" />
+              Delete Selected
+            </button>
+          </div>
+
           <div className="overflow-x-auto">
             <table className="w-full text-white">
               <thead>
                 <tr className="bg-purple-500 bg-opacity-50">
+                  <th className="p-2 text-left">Select</th>
                   <th className="p-2 text-left">Show</th>
                   <th className="p-2 text-left">Shot</th>
                   <th className="p-2 text-left">Dep</th>
@@ -143,6 +167,14 @@ const TodaysDeliveries = () => {
               <tbody>
                 {deliveries.map((delivery) => (
                   <tr key={delivery.id} className="bg-white bg-opacity-10 hover:bg-opacity-20 transition-colors">
+                    <td className="p-2">
+                      <input
+                        type="checkbox"
+                        checked={selectedDeliveries.includes(delivery.id)}
+                        onChange={() => handleCheckboxChange(delivery.id)}
+                        className="form-checkbox h-5 w-5 text-purple-600"
+                      />
+                    </td>
                     <td className="p-2">{delivery.show}</td>
                     <td className="p-2">{delivery.shot}</td>
                     <td className="p-2">{delivery.dep}</td>
