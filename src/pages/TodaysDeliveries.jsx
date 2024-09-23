@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, Trash2, CheckCircle, XCircle, ChevronUp, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LiveBackground from '../components/LiveBackground';
 import * as XLSX from 'xlsx';
@@ -11,6 +11,7 @@ const TodaysDeliveries = () => {
   const [deliveries, setDeliveries] = useState([]);
   const [selectedDeliveries, setSelectedDeliveries] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [showAddDelivery, setShowAddDelivery] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -98,7 +99,15 @@ const TodaysDeliveries = () => {
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-8 border border-white">
           <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 sm:mb-6 text-center">Today's Deliveries 🚚</h1>
           
-          <DeliveryForm addDelivery={addDelivery} handleFileUpload={handleFileUpload} />
+          <button
+            onClick={() => setShowAddDelivery(!showAddDelivery)}
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 sm:p-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition duration-300 text-sm sm:text-base mb-4 flex items-center justify-center"
+          >
+            {showAddDelivery ? 'Hide Add Delivery' : 'Show Add Delivery'}
+            {showAddDelivery ? <ChevronUp className="ml-2" size={20} /> : <ChevronDown className="ml-2" size={20} />}
+          </button>
+
+          {showAddDelivery && <DeliveryForm addDelivery={addDelivery} handleFileUpload={handleFileUpload} />}
 
           <div className="flex flex-col sm:flex-row justify-end mb-4 gap-2">
             <button
