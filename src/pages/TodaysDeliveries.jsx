@@ -156,18 +156,18 @@ const TodaysDeliveries = () => {
             <table className="w-full text-white border-collapse mx-auto">
               <thead>
                 <tr className="bg-purple-500 bg-opacity-50">
-                  <th className="p-2 text-left border border-white">Select</th>
-                  <th className="p-2 text-left border border-white">Show</th>
-                  <th className="p-2 text-left border border-white">Shot</th>
-                  <th className="p-2 text-left border border-white">Dep</th>
-                  <th className="p-2 text-left border border-white">Lead</th>
-                  <th className="p-2 text-left border border-white">ETA</th>
+                  <th className="p-2 text-center border-2 border-white">Select</th>
+                  <th className="p-2 text-center border-2 border-white">Show</th>
+                  <th className="p-2 text-center border-2 border-white">Shot</th>
+                  <th className="p-2 text-center border-2 border-white">Dep</th>
+                  <th className="p-2 text-center border-2 border-white">Lead</th>
+                  <th className="p-2 text-center border-2 border-white">ETA</th>
                 </tr>
               </thead>
               <tbody>
                 {deliveries.map((delivery) => (
                   <tr key={delivery.id} className="bg-white bg-opacity-10 hover:bg-opacity-20 transition-colors">
-                    <td className="p-2 border border-white">
+                    <td className="p-2 border-2 border-white text-center">
                       <input
                         type="checkbox"
                         checked={selectedDeliveries.includes(delivery.id)}
@@ -175,11 +175,11 @@ const TodaysDeliveries = () => {
                         className="form-checkbox h-5 w-5 text-purple-600"
                       />
                     </td>
-                    <td className="p-2 border border-white">{delivery.show}</td>
-                    <td className="p-2 border border-white">{delivery.shot}</td>
-                    <td className="p-2 border border-white">{delivery.dep}</td>
-                    <td className="p-2 border border-white">{delivery.lead}</td>
-                    <td className="p-2 border border-white">{delivery.eta}</td>
+                    <td className="p-2 border-2 border-white text-center">{delivery.show}</td>
+                    <td className="p-2 border-2 border-white text-center">{delivery.shot}</td>
+                    <td className="p-2 border-2 border-white text-center">{delivery.dep}</td>
+                    <td className="p-2 border-2 border-white text-center">{delivery.lead}</td>
+                    <td className="p-2 border-2 border-white text-center">{delivery.eta}</td>
                   </tr>
                 ))}
               </tbody>
