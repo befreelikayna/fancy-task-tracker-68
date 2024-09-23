@@ -1,6 +1,7 @@
-import { HomeIcon, ListTodo } from "lucide-react";
+import { HomeIcon, ListTodo, TruckIcon } from "lucide-react";
 import Index from "./pages/Index.jsx";
 import TodoList from "./pages/TodoList.jsx";
+import TodaysDeliveries from "./pages/TodaysDeliveries.jsx";
 
 export const navItems = [
   {
@@ -14,5 +15,11 @@ export const navItems = [
     to: "/todo",
     icon: <ListTodo className="h-4 w-4" />,
     page: <TodoList />,
+  },
+  {
+    title: "Today's Deliveries",
+    to: "/deliveries",
+    icon: <TruckIcon className="h-4 w-4" />,
+    page: <TodaysDeliveries />,
   },
 ];
