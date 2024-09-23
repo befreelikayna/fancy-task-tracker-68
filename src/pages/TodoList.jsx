@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const TodoList = () => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
+  const [newPriority, setNewPriority] = useState('medium');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,9 +21,18 @@ const TodoList = () => {
   const addTask = () => {
     if (newTask.trim()) {
       const currentDate = new Date();
-      const formattedDate = currentDate.toLocaleString();
-      setTasks([...tasks, { id: Date.now(), title: newTask, date: formattedDate, completed: false }]);
+      const formattedDate = currentDate.toLocaleDateString();
+      const formattedTime = currentDate.toLocaleTimeString();
+      setTasks([...tasks, { 
+        id: Date.now(), 
+        title: newTask, 
+        date: formattedDate,
+        time: formattedTime,
+        priority: newPriority,
+        completed: false 
+      }]);
       setNewTask('');
+      setNewPriority('medium');
     }
   };
 
@@ -51,19 +61,28 @@ const TodoList = () => {
         <div className="bg-white rounded-lg shadow-2xl p-8">
           <h1 className="text-3xl font-bold text-blue-900 mb-6">To-Do List 📝</h1>
           
-          <div className="flex mb-6">
+          <div className="flex flex-col mb-6">
             <input
               type="text"
               placeholder="Add your task"
               value={newTask}
               onChange={(e) => setNewTask(e.target.value)}
-              className="flex-grow p-3 border-2 border-gray-300 rounded-l-lg focus:outline-none focus:border-blue-500 text-gray-700"
+              className="p-3 border-2 border-gray-300 rounded-lg mb-2 focus:outline-none focus:border-blue-500 text-gray-700"
             />
+            <select
+              value={newPriority}
+              onChange={(e) => setNewPriority(e.target.value)}
+              className="p-3 border-2 border-gray-300 rounded-lg mb-2 focus:outline-none focus:border-blue-500 text-gray-700"
+            >
+              <option value="low">Low Priority</option>
+              <option value="medium">Medium Priority</option>
+              <option value="high">High Priority</option>
+            </select>
             <button
               onClick={addTask}
-              className="bg-red-500 text-white p-3 rounded-r-lg hover:bg-red-600 transition duration-300"
+              className="bg-red-500 text-white p-3 rounded-lg hover:bg-red-600 transition duration-300"
             >
-              ADD
+              ADD TASK
             </button>
           </div>
 
@@ -90,7 +109,9 @@ const TodoList = () => {
                   <span className={`text-gray-800 ${task.completed ? 'line-through' : ''}`}>
                     {task.title}
                   </span>
-                  <span className="text-sm text-gray-500">{task.date}</span>
+                  <span className="text-sm text-gray-500">
+                    {task.date} at {task.time} - {task.priority} priority
+                  </span>
                 </div>
               </div>
               <motion.button
