@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Upload, Trash2 } from 'lucide-react';
+import { ArrowLeft, Upload, Trash2, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LiveBackground from '../components/LiveBackground';
 import * as XLSX from 'xlsx';
@@ -13,7 +13,7 @@ const TodaysDeliveries = () => {
 
   useEffect(() => {
     const savedDeliveries = JSON.parse(localStorage.getItem('deliveries')) || [];
-    setDeliveries(savedDeliveries);
+    setDeliveries(savedDeliveries.map(d => ({ ...d, delivered: d.delivered || false })));
   }, []);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const TodaysDeliveries = () => {
 
   const addDelivery = () => {
     if (newDelivery.show && newDelivery.shot) {
-      setDeliveries([...deliveries, { ...newDelivery, id: Date.now() }]);
+      setDeliveries([...deliveries, { ...newDelivery, id: Date.now(), delivered: false }]);
       setNewDelivery({ show: '', shot: '', dep: '', lead: '', eta: new Date().toISOString().split('T')[0] });
     }
   };
@@ -49,6 +49,7 @@ const TodaysDeliveries = () => {
         dep: row[2] || '',
         lead: row[3] || '',
         eta: row[4] || new Date().toISOString().split('T')[0],
+        delivered: false,
       }));
 
       setDeliveries([...deliveries, ...newDeliveries]);
@@ -65,6 +66,12 @@ const TodaysDeliveries = () => {
   const deleteSelectedDeliveries = () => {
     setDeliveries(prev => prev.filter(delivery => !selectedDeliveries.includes(delivery.id)));
     setSelectedDeliveries([]);
+  };
+
+  const markAsDelivered = (id) => {
+    setDeliveries(prev => prev.map(delivery => 
+      delivery.id === id ? { ...delivery, delivered: true } : delivery
+    ));
   };
 
   return (
@@ -162,11 +169,12 @@ const TodaysDeliveries = () => {
                   <th className="p-2 text-center border-2 border-white">Dep</th>
                   <th className="p-2 text-center border-2 border-white">Lead</th>
                   <th className="p-2 text-center border-2 border-white">ETA</th>
+                  <th className="p-2 text-center border-2 border-white">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {deliveries.map((delivery) => (
-                  <tr key={delivery.id} className="bg-white bg-opacity-10 hover:bg-opacity-20 transition-colors">
+                  <tr key={delivery.id} className={`bg-white bg-opacity-10 hover:bg-opacity-20 transition-colors ${delivery.delivered ? 'bg-green-500 bg-opacity-50' : ''}`}>
                     <td className="p-2 border-2 border-white text-center">
                       <input
                         type="checkbox"
@@ -180,6 +188,19 @@ const TodaysDeliveries = () => {
                     <td className="p-2 border-2 border-white text-center">{delivery.dep}</td>
                     <td className="p-2 border-2 border-white text-center">{delivery.lead}</td>
                     <td className="p-2 border-2 border-white text-center">{delivery.eta}</td>
+                    <td className="p-2 border-2 border-white text-center">
+                      {delivery.delivered ? (
+                        <span className="text-green-300">Delivered</span>
+                      ) : (
+                        <button
+                          onClick={() => markAsDelivered(delivery.id)}
+                          className="bg-blue-500 text-white p-1 rounded-lg hover:bg-blue-600 transition duration-300 text-xs sm:text-sm flex items-center justify-center mx-auto"
+                        >
+                          <CheckCircle size={14} className="mr-1" />
+                          Mark Delivered
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
