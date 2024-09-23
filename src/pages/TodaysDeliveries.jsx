@@ -100,10 +100,10 @@ const TodaysDeliveries = () => {
           
           <DeliveryForm addDelivery={addDelivery} handleFileUpload={handleFileUpload} />
 
-          <div className="flex justify-end mb-4 gap-2">
+          <div className="flex flex-col sm:flex-row justify-end mb-4 gap-2">
             <button
               onClick={deleteSelectedDeliveries}
-              className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition duration-300 text-sm sm:text-base flex items-center"
+              className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition duration-300 text-sm sm:text-base flex items-center justify-center"
               disabled={selectedDeliveries.length === 0}
             >
               <Trash2 size={16} className="mr-2" />
@@ -111,7 +111,7 @@ const TodaysDeliveries = () => {
             </button>
             <button
               onClick={toggleSelectedDeliveryStatus}
-              className="bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition duration-300 text-sm sm:text-base flex items-center"
+              className="bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition duration-300 text-sm sm:text-base flex items-center justify-center"
               disabled={selectedDeliveries.length === 0}
             >
               {selectedDeliveries.every(id => deliveries.find(d => d.id === id).delivered) ? (
