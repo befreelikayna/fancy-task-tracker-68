@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Upload } from 'lucide-react';
 
-const DeliveryForm = ({ addDelivery }) => {
+const DeliveryForm = ({ addDelivery, handleFileUpload }) => {
   const [newDelivery, setNewDelivery] = useState({ show: '', shot: '', dep: '', lead: '', eta: '' });
 
   useEffect(() => {

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Upload, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, Trash2, CheckCircle, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LiveBackground from '../components/LiveBackground';
 import * as XLSX from 'xlsx';
-import { Resizable } from 'react-resizable';
-import 'react-resizable/css/styles.css';
 import DeliveryTable from '../components/DeliveryTable';
 import DeliveryForm from '../components/DeliveryForm';
 
@@ -100,7 +98,7 @@ const TodaysDeliveries = () => {
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-8 border border-white">
           <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 sm:mb-6 text-center">Today's Deliveries 🚚</h1>
           
-          <DeliveryForm addDelivery={addDelivery} />
+          <DeliveryForm addDelivery={addDelivery} handleFileUpload={handleFileUpload} />
 
           <div className="flex justify-end mb-4 gap-2">
             <button
