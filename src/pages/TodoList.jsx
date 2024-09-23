@@ -65,7 +65,7 @@ const TodoList = () => {
           onClick={() => navigate('/')}
           className="mb-4 sm:mb-8 text-white"
         >
-          <ArrowLeft size={24} sm:size={32} />
+          <ArrowLeft size={24} />
         </motion.button>
         
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-8 border border-white">
@@ -118,24 +118,24 @@ const TodoList = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
-                className={`flex items-center justify-between p-2 sm:p-4 mb-2 sm:mb-4 rounded-lg border border-white ${
+                className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-2 sm:p-4 mb-2 sm:mb-4 rounded-lg border border-white ${
                   task.completed ? 'bg-green-400 bg-opacity-50' : 'bg-white bg-opacity-50'
                 } transition-colors duration-300 ease-in-out`}
               >
-                <div className="flex items-center">
+                <div className="flex items-start sm:items-center w-full sm:w-auto">
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => toggleComplete(task.id)}
-                    className={`mr-2 sm:mr-4 ${task.completed ? 'text-green-700' : 'text-white'}`}
+                    className={`mr-2 sm:mr-4 mt-1 sm:mt-0 ${task.completed ? 'text-green-700' : 'text-white'}`}
                   >
-                    <CheckCircle size={20} sm:size={24} />
+                    <CheckCircle size={20} />
                   </motion.button>
-                  <div className="flex flex-col">
-                    <span className={`text-white font-semibold text-sm sm:text-base ${task.completed ? 'line-through' : ''}`}>
+                  <div className="flex flex-col flex-grow">
+                    <span className={`text-white font-semibold text-sm sm:text-base break-words w-full ${task.completed ? 'line-through' : ''}`}>
                       {task.title}
                     </span>
-                    <span className="text-xs sm:text-sm text-white">
+                    <span className="text-xs sm:text-sm text-white mt-1">
                       {task.date} at {task.time} - {task.priority} priority
                     </span>
                   </div>
@@ -144,9 +144,9 @@ const TodoList = () => {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => deleteTask(task.id)}
-                  className="text-white hover:text-red-300"
+                  className="text-white hover:text-red-300 mt-2 sm:mt-0"
                 >
-                  <Trash2 size={20} sm:size={24} />
+                  <Trash2 size={20} />
                 </motion.button>
               </motion.div>
             ))}
