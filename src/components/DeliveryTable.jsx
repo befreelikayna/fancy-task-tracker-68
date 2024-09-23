@@ -34,61 +34,63 @@ const DeliveryTable = ({ deliveries, selectedDeliveries, handleCheckboxChange, h
   );
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-white border-collapse mx-auto text-xs sm:text-sm">
-        <thead>
-          <tr className="bg-purple-500 bg-opacity-50">
-            <ResizableHeader onResize={onResize('select')} width={columnWidths.select}>
-              <input
-                type="checkbox"
-                checked={selectAll}
-                onChange={handleSelectAll}
-                className="form-checkbox h-4 w-4 text-purple-600"
-              />
-            </ResizableHeader>
-            <ResizableHeader onResize={onResize('show')} width={columnWidths.show}>Show</ResizableHeader>
-            <ResizableHeader onResize={onResize('shot')} width={columnWidths.shot}>Shot</ResizableHeader>
-            <ResizableHeader onResize={onResize('dep')} width={columnWidths.dep}>Dep</ResizableHeader>
-            <ResizableHeader onResize={onResize('lead')} width={columnWidths.lead}>Lead</ResizableHeader>
-            <ResizableHeader onResize={onResize('eta')} width={columnWidths.eta}>ETA</ResizableHeader>
-            <ResizableHeader onResize={onResize('status')} width={columnWidths.status}>Status</ResizableHeader>
-          </tr>
-        </thead>
-        <tbody>
-          {deliveries.map((delivery) => (
-            <tr key={delivery.id} className={`bg-white bg-opacity-10 hover:bg-opacity-20 transition-colors ${delivery.delivered ? 'bg-green-500 bg-opacity-50' : ''}`}>
-              <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.select }}>
+    <div className="overflow-x-auto w-full">
+      <div className="min-w-[700px]"> {/* Set a minimum width to ensure all columns are visible */}
+        <table className="w-full text-white border-collapse mx-auto text-xs sm:text-sm">
+          <thead>
+            <tr className="bg-purple-500 bg-opacity-50">
+              <ResizableHeader onResize={onResize('select')} width={columnWidths.select}>
                 <input
                   type="checkbox"
-                  checked={selectedDeliveries.includes(delivery.id)}
-                  onChange={() => handleCheckboxChange(delivery.id)}
+                  checked={selectAll}
+                  onChange={handleSelectAll}
                   className="form-checkbox h-4 w-4 text-purple-600"
                 />
-              </td>
-              <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.show }}>{delivery.show}</td>
-              <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.shot }}>{delivery.shot}</td>
-              <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.dep }}>{delivery.dep}</td>
-              <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.lead }}>{delivery.lead}</td>
-              <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.eta }}>{delivery.eta}</td>
-              <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.status }}>
-                {delivery.delivered ? (
-                  <span className="text-green-300">Delivered</span>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setDeliveries(prev => prev.map(d => d.id === delivery.id ? { ...d, delivered: true } : d));
-                    }}
-                    className="bg-blue-500 text-white p-1 rounded-lg hover:bg-blue-600 transition duration-300 text-xs flex items-center justify-center mx-auto"
-                  >
-                    <CheckCircle size={12} className="mr-1" />
-                    Mark Delivered
-                  </button>
-                )}
-              </td>
+              </ResizableHeader>
+              <ResizableHeader onResize={onResize('show')} width={columnWidths.show}>Show</ResizableHeader>
+              <ResizableHeader onResize={onResize('shot')} width={columnWidths.shot}>Shot</ResizableHeader>
+              <ResizableHeader onResize={onResize('dep')} width={columnWidths.dep}>Dep</ResizableHeader>
+              <ResizableHeader onResize={onResize('lead')} width={columnWidths.lead}>Lead</ResizableHeader>
+              <ResizableHeader onResize={onResize('eta')} width={columnWidths.eta}>ETA</ResizableHeader>
+              <ResizableHeader onResize={onResize('status')} width={columnWidths.status}>Status</ResizableHeader>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {deliveries.map((delivery) => (
+              <tr key={delivery.id} className={`bg-white bg-opacity-10 hover:bg-opacity-20 transition-colors ${delivery.delivered ? 'bg-green-500 bg-opacity-50' : ''}`}>
+                <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.select }}>
+                  <input
+                    type="checkbox"
+                    checked={selectedDeliveries.includes(delivery.id)}
+                    onChange={() => handleCheckboxChange(delivery.id)}
+                    className="form-checkbox h-4 w-4 text-purple-600"
+                  />
+                </td>
+                <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.show }}>{delivery.show}</td>
+                <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.shot }}>{delivery.shot}</td>
+                <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.dep }}>{delivery.dep}</td>
+                <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.lead }}>{delivery.lead}</td>
+                <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.eta }}>{delivery.eta}</td>
+                <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.status }}>
+                  {delivery.delivered ? (
+                    <span className="text-green-300">Delivered</span>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setDeliveries(prev => prev.map(d => d.id === delivery.id ? { ...d, delivered: true } : d));
+                      }}
+                      className="bg-blue-500 text-white p-1 rounded-lg hover:bg-blue-600 transition duration-300 text-xs flex items-center justify-center mx-auto"
+                    >
+                      <CheckCircle size={12} className="mr-1" />
+                      Mark Delivered
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

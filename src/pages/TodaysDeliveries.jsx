@@ -85,7 +85,7 @@ const TodaysDeliveries = () => {
   return (
     <div className="relative min-h-screen overflow-hidden">
       <LiveBackground />
-      <div className="relative z-10 max-w-6xl mx-auto p-4 sm:p-8">
+      <div className="relative z-10 max-w-full mx-auto p-4 sm:p-8">
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
