@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PlusCircle, Trash2, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Trash2, CheckCircle, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LiveBackground from '../components/LiveBackground';
 
@@ -71,42 +71,42 @@ const TodoList = () => {
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-8">
           <h1 className="text-4xl font-bold text-white mb-6">To-Do List 📝</h1>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="flex flex-wrap items-center gap-2 mb-6">
             <input
               type="text"
               placeholder="Add your task"
               value={newTask}
               onChange={(e) => setNewTask(e.target.value)}
-              className="p-3 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-purple-900 placeholder-purple-700"
+              className="flex-grow p-3 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-purple-900 placeholder-purple-700"
             />
             <input
               type="date"
               value={newDate}
               onChange={(e) => setNewDate(e.target.value)}
-              className="p-3 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-purple-900"
+              className="w-32 p-3 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-purple-900"
             />
             <input
               type="time"
               value={newTime}
               onChange={(e) => setNewTime(e.target.value)}
-              className="p-3 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-purple-900"
+              className="w-32 p-3 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-purple-900"
             />
             <select
               value={newPriority}
               onChange={(e) => setNewPriority(e.target.value)}
-              className="p-3 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-purple-900"
+              className="w-40 p-3 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-purple-900"
             >
               <option value="low">Low Priority</option>
               <option value="medium">Medium Priority</option>
               <option value="high">High Priority</option>
             </select>
+            <button
+              onClick={addTask}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition duration-300"
+            >
+              Add Task
+            </button>
           </div>
-          <button
-            onClick={addTask}
-            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white p-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition duration-300 mb-8"
-          >
-            Add Task
-          </button>
 
           <AnimatePresence>
             {tasks.map(task => (
