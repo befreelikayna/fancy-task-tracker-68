@@ -58,43 +58,45 @@ const TodoList = () => {
   return (
     <div className="relative min-h-screen overflow-hidden">
       <LiveBackground />
-      <div className="relative z-10 max-w-4xl mx-auto p-8">
+      <div className="relative z-10 max-w-4xl mx-auto p-4 sm:p-8">
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => navigate('/')}
-          className="mb-8 text-white"
+          className="mb-4 sm:mb-8 text-white"
         >
-          <ArrowLeft size={32} />
+          <ArrowLeft size={24} sm:size={32} />
         </motion.button>
         
-        <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-8 border border-white">
-          <h1 className="text-4xl font-bold text-white mb-6">To-Do List 📝</h1>
+        <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-8 border border-white">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 sm:mb-6">To-Do List 📝</h1>
           
-          <div className="flex flex-wrap items-center gap-2 mb-6">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-center gap-2 mb-4 sm:mb-6">
             <input
               type="text"
               placeholder="Add your task"
               value={newTask}
               onChange={(e) => setNewTask(e.target.value)}
-              className="flex-grow p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white placeholder-white"
+              className="w-full sm:flex-grow p-2 sm:p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white placeholder-white text-sm sm:text-base"
             />
-            <input
-              type="date"
-              value={newDate}
-              onChange={(e) => setNewDate(e.target.value)}
-              className="w-32 p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white"
-            />
-            <input
-              type="time"
-              value={newTime}
-              onChange={(e) => setNewTime(e.target.value)}
-              className="w-32 p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white"
-            />
+            <div className="flex w-full sm:w-auto gap-2">
+              <input
+                type="date"
+                value={newDate}
+                onChange={(e) => setNewDate(e.target.value)}
+                className="flex-1 sm:w-32 p-2 sm:p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white text-sm sm:text-base"
+              />
+              <input
+                type="time"
+                value={newTime}
+                onChange={(e) => setNewTime(e.target.value)}
+                className="flex-1 sm:w-32 p-2 sm:p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white text-sm sm:text-base"
+              />
+            </div>
             <select
               value={newPriority}
               onChange={(e) => setNewPriority(e.target.value)}
-              className="w-40 p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white"
+              className="w-full sm:w-40 p-2 sm:p-3 border-2 border-white rounded-lg focus:outline-none focus:border-purple-500 bg-white bg-opacity-50 text-white text-sm sm:text-base"
             >
               <option value="low">Low Priority</option>
               <option value="medium">Medium Priority</option>
@@ -102,7 +104,7 @@ const TodoList = () => {
             </select>
             <button
               onClick={addTask}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition duration-300"
+              className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 sm:p-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition duration-300 text-sm sm:text-base"
             >
               Add Task
             </button>
@@ -116,7 +118,7 @@ const TodoList = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
-                className={`flex items-center justify-between p-4 mb-4 rounded-lg border border-white ${
+                className={`flex items-center justify-between p-2 sm:p-4 mb-2 sm:mb-4 rounded-lg border border-white ${
                   task.completed ? 'bg-green-400 bg-opacity-50' : 'bg-white bg-opacity-50'
                 } transition-colors duration-300 ease-in-out`}
               >
@@ -125,15 +127,15 @@ const TodoList = () => {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => toggleComplete(task.id)}
-                    className={`mr-4 ${task.completed ? 'text-green-700' : 'text-white'}`}
+                    className={`mr-2 sm:mr-4 ${task.completed ? 'text-green-700' : 'text-white'}`}
                   >
-                    <CheckCircle size={24} />
+                    <CheckCircle size={20} sm:size={24} />
                   </motion.button>
                   <div className="flex flex-col">
-                    <span className={`text-white font-semibold ${task.completed ? 'line-through' : ''}`}>
+                    <span className={`text-white font-semibold text-sm sm:text-base ${task.completed ? 'line-through' : ''}`}>
                       {task.title}
                     </span>
-                    <span className="text-sm text-white">
+                    <span className="text-xs sm:text-sm text-white">
                       {task.date} at {task.time} - {task.priority} priority
                     </span>
                   </div>
@@ -144,7 +146,7 @@ const TodoList = () => {
                   onClick={() => deleteTask(task.id)}
                   className="text-white hover:text-red-300"
                 >
-                  <Trash2 size={24} />
+                  <Trash2 size={20} sm:size={24} />
                 </motion.button>
               </motion.div>
             ))}
