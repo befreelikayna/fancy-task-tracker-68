@@ -81,7 +81,7 @@ const TodaysDeliveries = () => {
         </motion.button>
         
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-8 border border-white">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 sm:mb-6">Today's Deliveries 🚚</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 sm:mb-6 text-center">Today's Deliveries 🚚</h1>
           
           <div className="flex flex-col sm:flex-row sm:flex-wrap items-center gap-2 mb-4 sm:mb-6">
             <input
@@ -153,21 +153,21 @@ const TodaysDeliveries = () => {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-white">
+            <table className="w-full text-white border-collapse mx-auto">
               <thead>
                 <tr className="bg-purple-500 bg-opacity-50">
-                  <th className="p-2 text-left">Select</th>
-                  <th className="p-2 text-left">Show</th>
-                  <th className="p-2 text-left">Shot</th>
-                  <th className="p-2 text-left">Dep</th>
-                  <th className="p-2 text-left">Lead</th>
-                  <th className="p-2 text-left">ETA</th>
+                  <th className="p-2 text-left border border-white">Select</th>
+                  <th className="p-2 text-left border border-white">Show</th>
+                  <th className="p-2 text-left border border-white">Shot</th>
+                  <th className="p-2 text-left border border-white">Dep</th>
+                  <th className="p-2 text-left border border-white">Lead</th>
+                  <th className="p-2 text-left border border-white">ETA</th>
                 </tr>
               </thead>
               <tbody>
                 {deliveries.map((delivery) => (
                   <tr key={delivery.id} className="bg-white bg-opacity-10 hover:bg-opacity-20 transition-colors">
-                    <td className="p-2">
+                    <td className="p-2 border border-white">
                       <input
                         type="checkbox"
                         checked={selectedDeliveries.includes(delivery.id)}
@@ -175,11 +175,11 @@ const TodaysDeliveries = () => {
                         className="form-checkbox h-5 w-5 text-purple-600"
                       />
                     </td>
-                    <td className="p-2">{delivery.show}</td>
-                    <td className="p-2">{delivery.shot}</td>
-                    <td className="p-2">{delivery.dep}</td>
-                    <td className="p-2">{delivery.lead}</td>
-                    <td className="p-2">{delivery.eta}</td>
+                    <td className="p-2 border border-white">{delivery.show}</td>
+                    <td className="p-2 border border-white">{delivery.shot}</td>
+                    <td className="p-2 border border-white">{delivery.dep}</td>
+                    <td className="p-2 border border-white">{delivery.lead}</td>
+                    <td className="p-2 border border-white">{delivery.eta}</td>
                   </tr>
                 ))}
               </tbody>
