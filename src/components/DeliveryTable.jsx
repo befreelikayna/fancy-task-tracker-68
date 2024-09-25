@@ -35,7 +35,7 @@ const DeliveryTable = ({ deliveries, selectedDeliveries, handleCheckboxChange, h
 
   const DeliveryRow = React.memo(({ delivery, isSelected, onCheckboxChange, onMarkDelivered }) => (
     <tr className={`transition-colors duration-300 ease-in-out ${
-      delivery.delivered ? 'bg-green-500 bg-opacity-70' : 'bg-white bg-opacity-10 hover:bg-opacity-20'
+      delivery.delivered ? 'bg-green-400 bg-opacity-70 text-white' : 'bg-white bg-opacity-10 hover:bg-opacity-20'
     }`}>
       <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.select }}>
         <input
