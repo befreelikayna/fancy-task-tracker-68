@@ -35,7 +35,7 @@ const DeliveryTable = ({ deliveries, selectedDeliveries, handleCheckboxChange, h
 
   const DeliveryRow = React.memo(({ delivery, isSelected, onCheckboxChange, onMarkDelivered }) => (
     <tr className={`transition-colors duration-300 ease-in-out ${
-      delivery.delivered ? 'bg-green-400 bg-opacity-70 text-white' : 'bg-white bg-opacity-10 hover:bg-opacity-20'
+      delivery.delivered ? 'bg-green-200 bg-opacity-40 text-gray-800' : 'bg-white bg-opacity-10 hover:bg-opacity-20'
     }`}>
       <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.select }}>
         <input
@@ -52,7 +52,7 @@ const DeliveryTable = ({ deliveries, selectedDeliveries, handleCheckboxChange, h
       <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.eta }}>{delivery.eta}</td>
       <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.status }}>
         {delivery.delivered ? (
-          <span className="text-white font-semibold">Delivered</span>
+          <span className="text-gray-800 font-semibold">Delivered</span>
         ) : (
           <button
             onClick={() => onMarkDelivered(delivery.id)}
