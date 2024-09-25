@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Resizable } from 'react-resizable';
 import { CheckCircle } from 'lucide-react';
 
@@ -20,7 +20,7 @@ const DeliveryTable = ({ deliveries, selectedDeliveries, handleCheckboxChange, h
     });
   };
 
-  const ResizableHeader = ({ onResize, width, children }) => (
+  const ResizableHeader = React.memo(({ onResize, width, children }) => (
     <Resizable
       width={width}
       height={0}
@@ -31,11 +31,46 @@ const DeliveryTable = ({ deliveries, selectedDeliveries, handleCheckboxChange, h
         {children}
       </th>
     </Resizable>
-  );
+  ));
+
+  const DeliveryRow = React.memo(({ delivery, isSelected, onCheckboxChange, onMarkDelivered }) => (
+    <tr className={`transition-colors duration-300 ease-in-out ${
+      delivery.delivered ? 'bg-green-500 bg-opacity-70' : 'bg-white bg-opacity-10 hover:bg-opacity-20'
+    }`}>
+      <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.select }}>
+        <input
+          type="checkbox"
+          checked={isSelected}
+          onChange={() => onCheckboxChange(delivery.id)}
+          className="form-checkbox h-4 w-4 text-purple-600"
+        />
+      </td>
+      <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.show }}>{delivery.show}</td>
+      <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.shot }}>{delivery.shot}</td>
+      <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.dep }}>{delivery.dep}</td>
+      <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.lead }}>{delivery.lead}</td>
+      <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.eta }}>{delivery.eta}</td>
+      <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.status }}>
+        {delivery.delivered ? (
+          <span className="text-white font-semibold">Delivered</span>
+        ) : (
+          <button
+            onClick={() => onMarkDelivered(delivery.id)}
+            className="bg-blue-500 text-white p-1 rounded-lg hover:bg-blue-600 transition duration-300 text-xs flex items-center justify-center mx-auto"
+          >
+            <CheckCircle size={12} className="mr-1" />
+            Mark Delivered
+          </button>
+        )}
+      </td>
+    </tr>
+  ));
+
+  const memoizedDeliveries = useMemo(() => deliveries, [deliveries]);
 
   return (
     <div className="overflow-x-auto w-full">
-      <div className="min-w-[700px]"> {/* Set a minimum width to ensure all columns are visible */}
+      <div className="min-w-[700px]">
         <table className="w-full text-white border-collapse mx-auto text-xs sm:text-sm">
           <thead>
             <tr className="bg-purple-500 bg-opacity-50">
@@ -56,37 +91,16 @@ const DeliveryTable = ({ deliveries, selectedDeliveries, handleCheckboxChange, h
             </tr>
           </thead>
           <tbody>
-            {deliveries.map((delivery) => (
-              <tr key={delivery.id} className={`bg-white bg-opacity-10 hover:bg-opacity-20 transition-colors ${delivery.delivered ? 'bg-green-500 bg-opacity-50' : ''}`}>
-                <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.select }}>
-                  <input
-                    type="checkbox"
-                    checked={selectedDeliveries.includes(delivery.id)}
-                    onChange={() => handleCheckboxChange(delivery.id)}
-                    className="form-checkbox h-4 w-4 text-purple-600"
-                  />
-                </td>
-                <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.show }}>{delivery.show}</td>
-                <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.shot }}>{delivery.shot}</td>
-                <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.dep }}>{delivery.dep}</td>
-                <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.lead }}>{delivery.lead}</td>
-                <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.eta }}>{delivery.eta}</td>
-                <td className="p-2 border-2 border-white text-center" style={{ width: columnWidths.status }}>
-                  {delivery.delivered ? (
-                    <span className="text-green-300">Delivered</span>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        setDeliveries(prev => prev.map(d => d.id === delivery.id ? { ...d, delivered: true } : d));
-                      }}
-                      className="bg-blue-500 text-white p-1 rounded-lg hover:bg-blue-600 transition duration-300 text-xs flex items-center justify-center mx-auto"
-                    >
-                      <CheckCircle size={12} className="mr-1" />
-                      Mark Delivered
-                    </button>
-                  )}
-                </td>
-              </tr>
+            {memoizedDeliveries.map((delivery) => (
+              <DeliveryRow
+                key={delivery.id}
+                delivery={delivery}
+                isSelected={selectedDeliveries.includes(delivery.id)}
+                onCheckboxChange={handleCheckboxChange}
+                onMarkDelivered={(id) => {
+                  setDeliveries(prev => prev.map(d => d.id === id ? { ...d, delivered: true } : d));
+                }}
+              />
             ))}
           </tbody>
         </table>
@@ -95,4 +109,4 @@ const DeliveryTable = ({ deliveries, selectedDeliveries, handleCheckboxChange, h
   );
 };
 
-export default DeliveryTable;
+export default React.memo(DeliveryTable);
