@@ -1,22 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Plus, Upload, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LiveBackground from '../components/LiveBackground';
+import AddShotModal from '../components/AddShotModal';
+import * as XLSX from 'xlsx';
 
 const MasterTracker = () => {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [trackerData, setTrackerData] = useState([]);
 
   const handleAddShot = () => {
-    console.log('Add shot clicked');
+    setIsModalOpen(true);
   };
 
-  const handleUploadExcel = () => {
-    console.log('Upload excel clicked');
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSubmitShot = (newShot) => {
+    setTrackerData(prevData => [...prevData, newShot]);
+  };
+
+  const handleUploadExcel = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const bstr = evt.target.result;
+      const wb = XLSX.read(bstr, { type: 'binary' });
+      const wsname = wb.SheetNames[0];
+      const ws = wb.Sheets[wsname];
+      const data = XLSX.utils.sheet_to_json(ws);
+      setTrackerData(prevData => [...prevData, ...data]);
+    };
+    reader.readAsBinaryString(file);
   };
 
   const handleExport = () => {
-    console.log('Export clicked');
+    const ws = XLSX.utils.json_to_sheet(trackerData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "MasterTracker");
+    XLSX.writeFile(wb, "MasterTracker.xlsx");
   };
 
   return (
@@ -46,15 +71,15 @@ const MasterTracker = () => {
                 <Plus size={16} className="mr-1" />
                 Add Shot
               </motion.button>
-              <motion.button
+              <motion.label
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleUploadExcel}
-                className="bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-green-600 hover:to-teal-600 transition duration-300 ease-in-out flex items-center text-sm"
+                className="bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-green-600 hover:to-teal-600 transition duration-300 ease-in-out flex items-center text-sm cursor-pointer"
               >
                 <Upload size={16} className="mr-1" />
                 Upload Excel
-              </motion.button>
+                <input type="file" onChange={handleUploadExcel} className="hidden" accept=".xlsx, .xls" />
+              </motion.label>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -68,7 +93,7 @@ const MasterTracker = () => {
           </div>
         </div>
 
-        <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-6 border border-white">
+        <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-6 border border-white overflow-x-auto">
           <div className="grid grid-cols-8 gap-4 text-white font-bold mb-4">
             <div>Show</div>
             <div>Shot</div>
@@ -79,9 +104,21 @@ const MasterTracker = () => {
             <div>StartDate</div>
             <div>EndDate</div>
           </div>
-          {/* Add your data rows here */}
+          {trackerData.map((row, index) => (
+            <div key={index} className="grid grid-cols-8 gap-4 text-white mb-2">
+              <div>{row.show}</div>
+              <div>{row.shot}</div>
+              <div>{row.department}</div>
+              <div>{row.lead}</div>
+              <div>{row.artist}</div>
+              <div>{row.status}</div>
+              <div>{row.startDate}</div>
+              <div>{row.endDate}</div>
+            </div>
+          ))}
         </div>
       </div>
+      <AddShotModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleSubmitShot} />
     </div>
   );
 };
