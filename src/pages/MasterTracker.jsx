@@ -25,19 +25,19 @@ const MasterTracker = () => {
   return (
     <div className="relative min-h-screen overflow-hidden">
       <LiveBackground />
-      <div className="relative z-10 max-w-4xl mx-auto p-4 sm:p-8">
+      <div className="relative z-10 max-w-4xl mx-auto p-4 sm:p-8 flex flex-col h-full">
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => navigate('/')}
-          className="mb-4 sm:mb-8 text-white"
+          className="mb-4 sm:mb-8 text-white self-start"
         >
           <ArrowLeft size={24} />
         </motion.button>
         
-        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 sm:mb-6 text-center">Master Tracker</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-8 sm:mb-12 text-center">Master Tracker</h1>
         
-        <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-8 border border-white">
+        <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-8 border border-white mt-auto">
           <div className="flex flex-wrap justify-center gap-4">
             <motion.button
               whileHover={{ scale: 1.05 }}
