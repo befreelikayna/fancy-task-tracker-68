@@ -35,10 +35,10 @@ const MasterTracker = () => {
           <ArrowLeft size={24} />
         </motion.button>
         
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 sm:mb-6 text-center">Master Tracker</h1>
+        
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-8 border border-white">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 sm:mb-6 text-center">Master Tracker</h1>
-          
-          <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <div className="flex flex-wrap justify-center gap-4">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -66,11 +66,6 @@ const MasterTracker = () => {
               <Download size={20} className="mr-2" />
               Export
             </motion.button>
-          </div>
-
-          {/* Add your table or list component here */}
-          <div className="bg-white bg-opacity-10 p-4 rounded-lg">
-            <p className="text-white text-center">Your master tracker content will go here.</p>
           </div>
         </div>
       </div>
