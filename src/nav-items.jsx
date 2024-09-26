@@ -1,7 +1,8 @@
-import { HomeIcon, ListTodo, TruckIcon } from "lucide-react";
+import { HomeIcon, ListTodo, TruckIcon, Database } from "lucide-react";
 import Index from "./pages/Index.jsx";
 import TodoList from "./pages/TodoList.jsx";
 import TodaysDeliveries from "./pages/TodaysDeliveries.jsx";
+import MasterTracker from "./pages/MasterTracker.jsx";
 
 export const navItems = [
   {
@@ -21,5 +22,11 @@ export const navItems = [
     to: "/deliveries",
     icon: <TruckIcon className="h-4 w-4" />,
     page: <TodaysDeliveries />,
+  },
+  {
+    title: "Master Tracker",
+    to: "/master-tracker",
+    icon: <Database className="h-4 w-4" />,
+    page: <MasterTracker />,
   },
 ];
