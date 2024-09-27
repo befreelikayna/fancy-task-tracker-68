@@ -8,6 +8,7 @@ import PreviewModal from '../components/PreviewModal';
 import EditModal from '../components/EditModal';
 import StatusDropdown from '../components/StatusDropdown';
 import MassSearchModal from '../components/MassSearchModal';
+import FilterModal from '../components/FilterModal';
 import * as XLSX from 'xlsx';
 
 const MasterTracker = () => {
@@ -16,6 +17,7 @@ const MasterTracker = () => {
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isMassSearchModalOpen, setIsMassSearchModalOpen] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [trackerData, setTrackerData] = useState([]);
   const [previewData, setPreviewData] = useState([]);
   const [selectedEntries, setSelectedEntries] = useState([]);
@@ -112,11 +114,9 @@ const MasterTracker = () => {
     }
   };
 
-  const handleFilterChange = (heading, value) => {
-    setFilters(prev => ({
-      ...prev,
-      [heading.toLowerCase()]: value
-    }));
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+    setIsFilterModalOpen(false);
   };
 
   const handleMassSearch = (shots) => {
@@ -223,6 +223,15 @@ const MasterTracker = () => {
                 <Search size={16} className="mr-1" />
                 Mass Search
               </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsFilterModalOpen(true)}
+                className="bg-gradient-to-r from-blue-400 to-cyan-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-blue-500 hover:to-cyan-600 transition duration-300 ease-in-out flex items-center text-sm"
+              >
+                <Filter size={16} className="mr-1" />
+                Filter
+              </motion.button>
             </div>
           </div>
         </div>
@@ -235,12 +244,6 @@ const MasterTracker = () => {
                 {headings.map((heading, index) => (
                   <th key={index} className="px-2 py-1 text-center text-white font-bold">
                     {heading}
-                    <input
-                      type="text"
-                      placeholder={`Filter ${heading}`}
-                      onChange={(e) => handleFilterChange(heading, e.target.value)}
-                      className="block w-full mt-1 px-2 py-1 text-sm bg-white bg-opacity-20 rounded"
-                    />
                   </th>
                 ))}
                 <th className="px-2 py-1 text-center text-white font-bold">Actions</th>
@@ -288,10 +291,11 @@ const MasterTracker = () => {
           </table>
         </div>
       </div>
-      <AddShotModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSubmit={handleSubmitShot} headings={headings} />
+      <AddShotModal isOpen={isAddModalOpen} onClose={handleCloseAddModal} onSubmit={handleSubmitShot} headings={headings} />
       <PreviewModal isOpen={isPreviewModalOpen} onClose={() => setIsPreviewModalOpen(false)} onConfirm={handleConfirmUpload} data={previewData} headings={headings} />
       <EditModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} onSave={handleSaveEdit} entry={editingEntry} headings={headings} />
       <MassSearchModal isOpen={isMassSearchModalOpen} onClose={() => setIsMassSearchModalOpen(false)} onSubmit={handleMassSearch} />
+      <FilterModal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)} onApply={handleApplyFilters} headings={headings} />
     </div>
   );
 };
