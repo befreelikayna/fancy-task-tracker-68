@@ -193,7 +193,7 @@ const MasterTracker = () => {
                 <Download size={16} className="mr-1" />
                 Export Excel
               </motion.button>
-              {selectedEntries.length > 1 && (
+              {selectedEntries.length > 0 && (
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
