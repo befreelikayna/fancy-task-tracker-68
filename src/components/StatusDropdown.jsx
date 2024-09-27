@@ -17,11 +17,12 @@ const statusOptions = [
 const StatusDropdown = ({ currentStatus, onStatusChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const buttonRef = useRef(null);
   const currentOption = statusOptions.find(option => option.value === currentStatus) || statusOptions[0];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && !buttonRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
@@ -36,6 +37,7 @@ const StatusDropdown = ({ currentStatus, onStatusChange }) => {
     <div className="relative inline-block text-left" ref={dropdownRef}>
       <div>
         <button
+          ref={buttonRef}
           type="button"
           className={`inline-flex justify-between items-center w-24 rounded-full px-2 py-1 text-xs font-medium text-white ${currentOption.color} hover:bg-opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75`}
           onClick={() => setIsOpen(!isOpen)}
