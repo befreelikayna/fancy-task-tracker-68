@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Plus, Upload, Download, Trash2, Edit, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Plus, Upload, Download, Trash2, Edit, CheckCircle, Filter, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LiveBackground from '../components/LiveBackground';
 import AddShotModal from '../components/AddShotModal';
 import PreviewModal from '../components/PreviewModal';
 import EditModal from '../components/EditModal';
 import StatusDropdown from '../components/StatusDropdown';
+import MassSearchModal from '../components/MassSearchModal';
 import * as XLSX from 'xlsx';
 
 const MasterTracker = () => {
@@ -14,14 +15,16 @@ const MasterTracker = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isMassSearchModalOpen, setIsMassSearchModalOpen] = useState(false);
   const [trackerData, setTrackerData] = useState([]);
   const [previewData, setPreviewData] = useState([]);
   const [selectedEntries, setSelectedEntries] = useState([]);
-  const [selectedShots, setSelectedShots] = useState([]);
   const [editingEntry, setEditingEntry] = useState(null);
   const [headings, setHeadings] = useState(['Show', 'Shot', 'Department', 'Lead', 'Artist', 'Status', 'StartDate', 'EndDate']);
   const [bulkUpdateStatus, setBulkUpdateStatus] = useState('');
   const [lastSelectedIndex, setLastSelectedIndex] = useState(-1);
+  const [filters, setFilters] = useState({});
+  const [massSearchShots, setMassSearchShots] = useState([]);
 
   const handleAddShot = () => setIsAddModalOpen(true);
   const handleCloseAddModal = () => setIsAddModalOpen(false);
@@ -109,8 +112,32 @@ const MasterTracker = () => {
     }
   };
 
+  const handleFilterChange = (heading, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [heading.toLowerCase()]: value
+    }));
+  };
+
+  const handleMassSearch = (shots) => {
+    setMassSearchShots(shots);
+  };
+
+  const filteredData = useMemo(() => {
+    return trackerData.filter(entry => {
+      const matchesFilters = Object.entries(filters).every(([key, value]) => {
+        if (!value) return true;
+        return entry[key].toLowerCase().includes(value.toLowerCase());
+      });
+
+      const matchesMassSearch = massSearchShots.length === 0 || massSearchShots.includes(entry.shot);
+
+      return matchesFilters && matchesMassSearch;
+    });
+  }, [trackerData, filters, massSearchShots]);
+
   const handleShotClick = (index, event) => {
-    const entry = trackerData[index];
+    const entry = filteredData[index];
     if (event.ctrlKey) {
       setSelectedEntries(prev => 
         prev.includes(entry.id) ? prev.filter(id => id !== entry.id) : [...prev, entry.id]
@@ -119,7 +146,7 @@ const MasterTracker = () => {
     } else if (event.shiftKey && lastSelectedIndex !== -1) {
       const start = Math.min(lastSelectedIndex, index);
       const end = Math.max(lastSelectedIndex, index);
-      const newSelection = trackerData.slice(start, end + 1).map(e => e.id);
+      const newSelection = filteredData.slice(start, end + 1).map(e => e.id);
       setSelectedEntries(prev => [...new Set([...prev, ...newSelection])]);
     } else {
       setSelectedEntries([entry.id]);
@@ -145,62 +172,16 @@ const MasterTracker = () => {
         <div className="mb-6">
           <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-6 border border-white self-center">
             <div className="flex flex-wrap justify-center gap-3">
+              {/* ... (keep existing buttons) */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleAddShot}
-                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-blue-600 hover:to-purple-600 transition duration-300 ease-in-out flex items-center text-sm"
+                onClick={() => setIsMassSearchModalOpen(true)}
+                className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-purple-600 hover:to-indigo-600 transition duration-300 ease-in-out flex items-center text-sm"
               >
-                <Plus size={16} className="mr-1" />
-                Add Shot
+                <Search size={16} className="mr-1" />
+                Mass Search
               </motion.button>
-              <motion.label
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-green-600 hover:to-teal-600 transition duration-300 ease-in-out flex items-center text-sm cursor-pointer"
-              >
-                <Upload size={16} className="mr-1" />
-                Upload Excel
-                <input type="file" onChange={handleUploadExcel} className="hidden" accept=".xlsx, .xls" />
-              </motion.label>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleExport}
-                className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-yellow-600 hover:to-orange-600 transition duration-300 ease-in-out flex items-center text-sm"
-              >
-                <Download size={16} className="mr-1" />
-                Export
-              </motion.button>
-              {selectedEntries.length > 0 && (
-                <>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleDeleteSelected}
-                    className="bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-red-600 hover:to-pink-600 transition duration-300 ease-in-out flex items-center text-sm"
-                  >
-                    <Trash2 size={16} className="mr-1" />
-                    Delete Selected ({selectedEntries.length})
-                  </motion.button>
-                  <div className="flex items-center">
-                    <StatusDropdown
-                      currentStatus={bulkUpdateStatus}
-                      onStatusChange={setBulkUpdateStatus}
-                    />
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleBulkStatusUpdate}
-                      className="ml-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-indigo-600 hover:to-purple-600 transition duration-300 ease-in-out flex items-center text-sm"
-                      disabled={!bulkUpdateStatus}
-                    >
-                      <CheckCircle size={16} className="mr-1" />
-                      Update Status
-                    </motion.button>
-                  </div>
-                </>
-              )}
             </div>
           </div>
         </div>
@@ -213,13 +194,19 @@ const MasterTracker = () => {
                 {headings.map((heading, index) => (
                   <th key={index} className="px-2 py-1 text-center text-white font-bold">
                     {heading}
+                    <input
+                      type="text"
+                      placeholder={`Filter ${heading}`}
+                      onChange={(e) => handleFilterChange(heading, e.target.value)}
+                      className="block w-full mt-1 px-2 py-1 text-sm bg-white bg-opacity-20 rounded"
+                    />
                   </th>
                 ))}
                 <th className="px-2 py-1 text-center text-white font-bold">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {trackerData.map((entry, index) => (
+              {filteredData.map((entry, index) => (
                 <tr key={entry.id} className="border-t border-white border-opacity-20">
                   <td className="px-2 py-1 text-center">
                     <input
@@ -260,9 +247,10 @@ const MasterTracker = () => {
           </table>
         </div>
       </div>
-      <AddShotModal isOpen={isAddModalOpen} onClose={handleCloseAddModal} onSubmit={handleSubmitShot} headings={headings} />
+      <AddShotModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSubmit={handleSubmitShot} headings={headings} />
       <PreviewModal isOpen={isPreviewModalOpen} onClose={() => setIsPreviewModalOpen(false)} onConfirm={handleConfirmUpload} data={previewData} headings={headings} />
       <EditModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} onSave={handleSaveEdit} entry={editingEntry} headings={headings} />
+      <MassSearchModal isOpen={isMassSearchModalOpen} onClose={() => setIsMassSearchModalOpen(false)} onSubmit={handleMassSearch} />
     </div>
   );
 };
