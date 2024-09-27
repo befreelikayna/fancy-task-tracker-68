@@ -45,7 +45,7 @@ const StatusDropdown = ({ currentStatus, onStatusChange }) => {
         </button>
       </div>
       {isOpen && (
-        <div className="absolute right-0 mt-1 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+        <div className="absolute left-0 mt-1 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
           <div className="py-1 max-h-48 overflow-auto" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
             {statusOptions.map((option) => (
               <button
