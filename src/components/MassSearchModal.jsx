@@ -6,7 +6,7 @@ const MassSearchModal = ({ isOpen, onClose, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const shots = searchText.split('\n').filter(shot => shot.trim() !== '');
+    const shots = searchText.split('\n').map(shot => shot.trim()).filter(shot => shot !== '');
     onSubmit(shots);
     onClose();
   };

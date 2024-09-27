@@ -236,6 +236,21 @@ const MasterTracker = () => {
           </div>
         </div>
         
+        {selectedEntries.length > 0 && (
+          <div className="mb-4 flex items-center justify-center">
+            <StatusDropdown
+              currentStatus={bulkUpdateStatus}
+              onStatusChange={setBulkUpdateStatus}
+            />
+            <button
+              onClick={handleBulkStatusUpdate}
+              className="ml-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+            >
+              Update Selected
+            </button>
+          </div>
+        )}
+        
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-6 border border-white overflow-x-auto">
           <table className="w-full">
             <thead>
