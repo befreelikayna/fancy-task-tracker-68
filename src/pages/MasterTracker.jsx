@@ -232,24 +232,26 @@ const MasterTracker = () => {
                 <Filter size={16} className="mr-1" />
                 Filter
               </motion.button>
+              {selectedEntries.length > 0 && (
+                <div className="flex items-center">
+                  <StatusDropdown
+                    currentStatus={bulkUpdateStatus}
+                    onStatusChange={setBulkUpdateStatus}
+                  />
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleBulkStatusUpdate}
+                    className="ml-2 bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-green-500 hover:to-blue-600 transition duration-300 ease-in-out flex items-center text-sm"
+                  >
+                    <CheckCircle size={16} className="mr-1" />
+                    Update Selected
+                  </motion.button>
+                </div>
+              )}
             </div>
           </div>
         </div>
-        
-        {selectedEntries.length > 0 && (
-          <div className="mb-4 flex items-center justify-center">
-            <StatusDropdown
-              currentStatus={bulkUpdateStatus}
-              onStatusChange={setBulkUpdateStatus}
-            />
-            <button
-              onClick={handleBulkStatusUpdate}
-              className="ml-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
-            >
-              Update Selected
-            </button>
-          </div>
-        )}
         
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-6 border border-white overflow-x-auto">
           <table className="w-full">
