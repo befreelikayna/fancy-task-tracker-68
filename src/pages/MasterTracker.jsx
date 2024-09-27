@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Plus, Upload, Download, Trash2, Edit, CheckCircle, Filter, Search, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -21,10 +21,11 @@ const MasterTracker = () => {
   const [previewData, setPreviewData] = useState([]);
   const [selectedEntries, setSelectedEntries] = useState([]);
   const [editingEntry, setEditingEntry] = useState(null);
-  const [headings, setHeadings] = useState(['Show', 'Shot', 'Department', 'Lead', 'Artist', 'Status', 'StartDate', 'EndDate']);
+  const [headings] = useState(['Show', 'Shot', 'Department', 'Lead', 'Artist', 'Status', 'StartDate', 'EndDate']);
   const [bulkUpdateStatus, setBulkUpdateStatus] = useState('');
   const [filters, setFilters] = useState({});
   const [massSearchShots, setMassSearchShots] = useState([]);
+  const [lastSelectedIndex, setLastSelectedIndex] = useState(-1);
   const navigate = useNavigate();
 
   const handleAddShot = () => setIsAddModalOpen(true);
@@ -75,11 +76,38 @@ const MasterTracker = () => {
     XLSX.writeFile(wb, "MasterTracker.xlsx");
   };
 
-  const handleCheckboxChange = (id) => {
-    setSelectedEntries(prev => 
-      prev.includes(id) ? prev.filter(entryId => entryId !== id) : [...prev, id]
-    );
-  };
+  const handleCheckboxChange = useCallback((id, index, event) => {
+    setSelectedEntries(prev => {
+      let newSelection = [...prev];
+      const isSelected = newSelection.includes(id);
+
+      if (event.shiftKey && lastSelectedIndex !== -1) {
+        const start = Math.min(lastSelectedIndex, index);
+        const end = Math.max(lastSelectedIndex, index);
+        const idsToSelect = trackerData.slice(start, end + 1).map(entry => entry.id);
+        idsToSelect.forEach(entryId => {
+          if (!newSelection.includes(entryId)) {
+            newSelection.push(entryId);
+          }
+        });
+      } else if (event.ctrlKey || event.metaKey) {
+        if (isSelected) {
+          newSelection = newSelection.filter(entryId => entryId !== id);
+        } else {
+          newSelection.push(id);
+        }
+      } else {
+        newSelection = [id];
+      }
+
+      setLastSelectedIndex(index);
+      return newSelection;
+    });
+  }, [lastSelectedIndex, trackerData]);
+
+  const handleShotClick = useCallback((id, index, event) => {
+    handleCheckboxChange(id, index, event);
+  }, [handleCheckboxChange]);
 
   const handleDeleteSelected = () => {
     setTrackerData(prev => prev.filter(entry => !selectedEntries.includes(entry.id)));
@@ -163,7 +191,7 @@ const MasterTracker = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setIsAddModalOpen(true)}
+                onClick={handleAddShot}
                 className="bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-green-500 hover:to-blue-600 transition duration-300 ease-in-out flex items-center text-sm"
               >
                 <Plus size={16} className="mr-1" />
@@ -273,13 +301,14 @@ const MasterTracker = () => {
                     <input
                       type="checkbox"
                       checked={selectedEntries.includes(entry.id)}
-                      onChange={() => handleCheckboxChange(entry.id)}
+                      onChange={(e) => handleCheckboxChange(entry.id, index, e)}
                     />
                   </td>
                   {headings.map((heading, headingIndex) => (
                     <td 
                       key={headingIndex} 
                       className={`px-2 py-1 text-white text-center ${heading.toLowerCase() === 'shot' ? 'cursor-pointer' : ''}`}
+                      onClick={heading.toLowerCase() === 'shot' ? (e) => handleShotClick(entry.id, index, e) : undefined}
                     >
                       {heading.toLowerCase() === 'status' ? (
                         <StatusDropdown
@@ -307,7 +336,7 @@ const MasterTracker = () => {
           </table>
         </div>
       </div>
-      <AddShotModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSubmit={handleSubmitShot} headings={headings} />
+      <AddShotModal isOpen={isAddModalOpen} onClose={handleCloseAddModal} onSubmit={handleSubmitShot} headings={headings} />
       <PreviewModal isOpen={isPreviewModalOpen} onClose={() => setIsPreviewModalOpen(false)} onConfirm={handleConfirmUpload} data={previewData} headings={headings} />
       <EditModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} onSave={handleSaveEdit} entry={editingEntry} headings={headings} />
       <MassSearchModal isOpen={isMassSearchModalOpen} onClose={() => setIsMassSearchModalOpen(false)} onSubmit={handleMassSearch} />
