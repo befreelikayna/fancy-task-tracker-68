@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Plus, Upload, Download, Trash2, Edit, CheckCircle, Filter, Search } from 'lucide-react';
+import { ArrowLeft, Plus, Upload, Download, Trash2, Edit, CheckCircle, Filter, Search, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LiveBackground from '../components/LiveBackground';
 import AddShotModal from '../components/AddShotModal';
@@ -123,6 +123,13 @@ const MasterTracker = () => {
     setMassSearchShots(shots);
   };
 
+  const handleClearFilters = () => {
+    setFilters({});
+    setMassSearchShots([]);
+  };
+
+  const isFilterApplied = Object.values(filters).some(value => value !== '') || massSearchShots.length > 0;
+
   const filteredData = useMemo(() => {
     return trackerData.filter(entry => {
       const matchesFilters = Object.entries(filters).every(([key, value]) => {
@@ -204,16 +211,17 @@ const MasterTracker = () => {
                 <Download size={16} className="mr-1" />
                 Export Excel
               </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleDeleteSelected}
-                className="bg-gradient-to-r from-red-400 to-red-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-red-500 hover:to-red-600 transition duration-300 ease-in-out flex items-center text-sm"
-                disabled={selectedEntries.length === 0}
-              >
-                <Trash2 size={16} className="mr-1" />
-                Delete Selected
-              </motion.button>
+              {selectedEntries.length > 1 && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleDeleteSelected}
+                  className="bg-gradient-to-r from-red-400 to-red-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-red-500 hover:to-red-600 transition duration-300 ease-in-out flex items-center text-sm"
+                >
+                  <Trash2 size={16} className="mr-1" />
+                  Delete Selected
+                </motion.button>
+              )}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -232,6 +240,17 @@ const MasterTracker = () => {
                 <Filter size={16} className="mr-1" />
                 Filter
               </motion.button>
+              {isFilterApplied && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleClearFilters}
+                  className="bg-gradient-to-r from-gray-400 to-gray-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-gray-500 hover:to-gray-600 transition duration-300 ease-in-out flex items-center text-sm"
+                >
+                  <X size={16} className="mr-1" />
+                  Clear Filters
+                </motion.button>
+              )}
               {selectedEntries.length > 0 && (
                 <div className="flex items-center">
                   <StatusDropdown
