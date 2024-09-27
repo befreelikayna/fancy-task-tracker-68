@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Plus, Upload, Download, MoreVertical, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Upload, Download, MoreVertical, Trash2, Edit } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LiveBackground from '../components/LiveBackground';
 import AddShotModal from '../components/AddShotModal';
 import PreviewModal from '../components/PreviewModal';
 import EditModal from '../components/EditModal';
+import StatusDropdown from '../components/StatusDropdown';
 import * as XLSX from 'xlsx';
 
 const MasterTracker = () => {
@@ -17,6 +18,7 @@ const MasterTracker = () => {
   const [previewData, setPreviewData] = useState([]);
   const [selectedEntries, setSelectedEntries] = useState([]);
   const [editingEntry, setEditingEntry] = useState(null);
+  const [headings, setHeadings] = useState(['Show', 'Shot', 'Department', 'Lead', 'Artist', 'Status', 'StartDate', 'EndDate']);
 
   const handleAddShot = () => {
     setIsAddModalOpen(true);
@@ -102,7 +104,9 @@ const MasterTracker = () => {
     setEditingEntry(null);
   };
 
-  const headings = ['Show', 'Shot', 'Department', 'Lead', 'Artist', 'Status', 'StartDate', 'EndDate'];
+  const handleEditHeading = (index, newHeading) => {
+    setHeadings(prev => prev.map((heading, i) => i === index ? newHeading : heading));
+  };
 
   return (
     <div className="relative min-h-screen overflow-hidden flex flex-col">
@@ -167,8 +171,8 @@ const MasterTracker = () => {
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-6 border border-white overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr>
-                <th className="px-2 py-1 text-left">
+              <tr className="bg-purple-600 bg-opacity-50">
+                <th className="px-2 py-1 text-center">
                   <input
                     type="checkbox"
                     onChange={() => {
@@ -182,17 +186,22 @@ const MasterTracker = () => {
                   />
                 </th>
                 {headings.map((heading, index) => (
-                  <th key={index} className="px-2 py-1 text-left text-white font-bold">
-                    {heading}
+                  <th key={index} className="px-2 py-1 text-center text-white font-bold border border-white">
+                    <input
+                      type="text"
+                      value={heading}
+                      onChange={(e) => handleEditHeading(index, e.target.value)}
+                      className="bg-transparent text-center text-white font-bold w-full"
+                    />
                   </th>
                 ))}
-                <th className="px-2 py-1 text-left text-white font-bold">Actions</th>
+                <th className="px-2 py-1 text-center text-white font-bold border border-white">Actions</th>
               </tr>
             </thead>
             <tbody>
               {trackerData.map((entry) => (
                 <tr key={entry.id} className="border-t border-white border-opacity-20">
-                  <td className="px-2 py-1">
+                  <td className="px-2 py-1 text-center">
                     <input
                       type="checkbox"
                       checked={selectedEntries.includes(entry.id)}
@@ -200,16 +209,26 @@ const MasterTracker = () => {
                     />
                   </td>
                   {headings.map((heading, index) => (
-                    <td key={index} className="px-2 py-1 text-white">
-                      {entry[heading.toLowerCase()]}
+                    <td key={index} className="px-2 py-1 text-white text-center">
+                      {heading.toLowerCase() === 'status' ? (
+                        <StatusDropdown
+                          currentStatus={entry[heading.toLowerCase()]}
+                          onStatusChange={(newStatus) => {
+                            const updatedEntry = { ...entry, [heading.toLowerCase()]: newStatus };
+                            handleSaveEdit(updatedEntry);
+                          }}
+                        />
+                      ) : (
+                        entry[heading.toLowerCase()]
+                      )}
                     </td>
                   ))}
-                  <td className="px-2 py-1">
+                  <td className="px-2 py-1 text-center">
                     <button
                       onClick={() => handleEditEntry(entry)}
                       className="text-white hover:text-blue-300 transition-colors"
                     >
-                      <MoreVertical size={16} />
+                      <Edit size={16} />
                     </button>
                   </td>
                 </tr>

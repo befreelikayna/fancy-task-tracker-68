@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
+import StatusDropdown from './StatusDropdown';
 
 const EditModal = ({ isOpen, onClose, onSave, entry, headings }) => {
   const [editedEntry, setEditedEntry] = useState({});
@@ -13,6 +14,10 @@ const EditModal = ({ isOpen, onClose, onSave, entry, headings }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEditedEntry(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleStatusChange = (newStatus) => {
+    setEditedEntry(prev => ({ ...prev, status: newStatus }));
   };
 
   const handleSubmit = (e) => {
@@ -37,15 +42,22 @@ const EditModal = ({ isOpen, onClose, onSave, entry, headings }) => {
               <label htmlFor={heading.toLowerCase()} className="block text-sm font-medium text-gray-700 mb-1">
                 {heading}
               </label>
-              <input
-                type={heading.includes('Date') ? 'date' : 'text'}
-                id={heading.toLowerCase()}
-                name={heading.toLowerCase()}
-                value={editedEntry[heading.toLowerCase()] || ''}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                required
-              />
+              {heading.toLowerCase() === 'status' ? (
+                <StatusDropdown
+                  currentStatus={editedEntry[heading.toLowerCase()]}
+                  onStatusChange={handleStatusChange}
+                />
+              ) : (
+                <input
+                  type={heading.includes('Date') ? 'date' : 'text'}
+                  id={heading.toLowerCase()}
+                  name={heading.toLowerCase()}
+                  value={editedEntry[heading.toLowerCase()] || ''}
+                  onChange={handleChange}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  required
+                />
+              )}
             </div>
           ))}
           <button
