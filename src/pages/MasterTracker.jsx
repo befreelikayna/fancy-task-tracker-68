@@ -34,8 +34,19 @@ const MasterTracker = () => {
       const wb = XLSX.read(bstr, { type: 'binary' });
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
-      const data = XLSX.utils.sheet_to_json(ws);
-      setPreviewData(data);
+      const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+      
+      // Process the data to match our tracker format
+      const headers = data[0];
+      const processedData = data.slice(1).map(row => {
+        const obj = {};
+        headers.forEach((header, index) => {
+          obj[header.toLowerCase()] = row[index] || '';
+        });
+        return obj;
+      });
+
+      setPreviewData(processedData);
       setIsPreviewModalOpen(true);
     };
     reader.readAsBinaryString(file);
