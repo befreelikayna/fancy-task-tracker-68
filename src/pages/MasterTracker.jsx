@@ -106,8 +106,30 @@ const MasterTracker = () => {
   }, [lastSelectedIndex, trackerData]);
 
   const handleShotClick = useCallback((id, index, event) => {
-    handleCheckboxChange(id, index, event);
-  }, [handleCheckboxChange]);
+    setSelectedEntries(prev => {
+      const isSelected = prev.includes(id);
+      if (isSelected) {
+        // If the entry is already selected, remove it from the selection
+        return prev.filter(entryId => entryId !== id);
+      } else {
+        // If the entry is not selected, add it to the selection
+        if (event.ctrlKey || event.metaKey) {
+          // Add to existing selection if Ctrl/Cmd is pressed
+          return [...prev, id];
+        } else if (event.shiftKey && lastSelectedIndex !== -1) {
+          // Select range if Shift is pressed
+          const start = Math.min(lastSelectedIndex, index);
+          const end = Math.max(lastSelectedIndex, index);
+          const idsToSelect = trackerData.slice(start, end + 1).map(entry => entry.id);
+          return [...new Set([...prev, ...idsToSelect])];
+        } else {
+          // Replace selection if no modifier key is pressed
+          return [id];
+        }
+      }
+    });
+    setLastSelectedIndex(index);
+  }, [lastSelectedIndex, trackerData]);
 
   const handleDeleteSelected = () => {
     setTrackerData(prev => prev.filter(entry => !selectedEntries.includes(entry.id)));
