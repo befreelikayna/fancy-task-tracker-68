@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Plus, Upload, Download, Trash2, Edit, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -110,19 +110,19 @@ const MasterTracker = () => {
   };
 
   const handleShotClick = (index, event) => {
-    const shot = trackerData[index].shot;
+    const entry = trackerData[index];
     if (event.ctrlKey) {
-      setSelectedShots(prev => 
-        prev.includes(shot) ? prev.filter(s => s !== shot) : [...prev, shot]
+      setSelectedEntries(prev => 
+        prev.includes(entry.id) ? prev.filter(id => id !== entry.id) : [...prev, entry.id]
       );
       setLastSelectedIndex(index);
     } else if (event.shiftKey && lastSelectedIndex !== -1) {
       const start = Math.min(lastSelectedIndex, index);
       const end = Math.max(lastSelectedIndex, index);
-      const newSelection = trackerData.slice(start, end + 1).map(entry => entry.shot);
-      setSelectedShots(prev => [...new Set([...prev, ...newSelection])]);
+      const newSelection = trackerData.slice(start, end + 1).map(e => e.id);
+      setSelectedEntries(prev => [...new Set([...prev, ...newSelection])]);
     } else {
-      setSelectedShots([shot]);
+      setSelectedEntries([entry.id]);
       setLastSelectedIndex(index);
     }
   };
@@ -240,7 +240,7 @@ const MasterTracker = () => {
                           onStatusChange={(newStatus) => handleStatusChange(entry.id, newStatus)}
                         />
                       ) : (
-                        <span className={heading.toLowerCase() === 'shot' && selectedShots.includes(entry.shot) ? 'bg-blue-500 px-2 py-1 rounded' : ''}>
+                        <span className={heading.toLowerCase() === 'shot' && selectedEntries.includes(entry.id) ? 'bg-blue-500 px-2 py-1 rounded' : ''}>
                           {entry[heading.toLowerCase()]}
                         </span>
                       )}
