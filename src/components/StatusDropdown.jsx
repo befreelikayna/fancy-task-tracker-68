@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 const statusOptions = [
@@ -16,10 +16,24 @@ const statusOptions = [
 
 const StatusDropdown = ({ currentStatus, onStatusChange }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const currentOption = statusOptions.find(option => option.value === currentStatus) || statusOptions[0];
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative inline-block text-left" ref={dropdownRef}>
       <div>
         <button
           type="button"
@@ -31,8 +45,8 @@ const StatusDropdown = ({ currentStatus, onStatusChange }) => {
         </button>
       </div>
       {isOpen && (
-        <div className="absolute right-0 mt-1 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10 max-h-48 overflow-y-auto">
-          <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+        <div className="absolute right-0 mt-1 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+          <div className="py-1 max-h-48 overflow-auto" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
             {statusOptions.map((option) => (
               <button
                 key={option.value}
