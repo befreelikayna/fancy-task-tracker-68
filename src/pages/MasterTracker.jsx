@@ -93,10 +93,6 @@ const MasterTracker = () => {
     setEditingEntry(null);
   };
 
-  const handleEditHeading = (index, newHeading) => {
-    setHeadings(prev => prev.map((heading, i) => i === index ? newHeading : heading));
-  };
-
   const handleStatusChange = (id, newStatus) => {
     setTrackerData(prev => prev.map(entry => 
       entry.id === id ? { ...entry, status: newStatus } : entry
@@ -212,7 +208,15 @@ const MasterTracker = () => {
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-6 border border-white overflow-x-auto">
           <table className="w-full">
             <thead>
-              {/* ... (keep existing thead) */}
+              <tr className="bg-purple-500 bg-opacity-50">
+                <th className="px-2 py-1 text-center text-white font-bold">Select</th>
+                {headings.map((heading, index) => (
+                  <th key={index} className="px-2 py-1 text-center text-white font-bold">
+                    {heading}
+                  </th>
+                ))}
+                <th className="px-2 py-1 text-center text-white font-bold">Actions</th>
+              </tr>
             </thead>
             <tbody>
               {trackerData.map((entry, index) => (
@@ -236,7 +240,7 @@ const MasterTracker = () => {
                           onStatusChange={(newStatus) => handleStatusChange(entry.id, newStatus)}
                         />
                       ) : (
-                        <span className={heading.toLowerCase() === 'shot' && selectedShots.includes(entry.shot) ? 'bg-blue-500' : ''}>
+                        <span className={heading.toLowerCase() === 'shot' && selectedShots.includes(entry.shot) ? 'bg-blue-500 px-2 py-1 rounded' : ''}>
                           {entry[heading.toLowerCase()]}
                         </span>
                       )}
