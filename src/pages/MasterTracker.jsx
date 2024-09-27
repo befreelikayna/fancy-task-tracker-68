@@ -12,7 +12,6 @@ import FilterModal from '../components/FilterModal';
 import * as XLSX from 'xlsx';
 
 const MasterTracker = () => {
-  const navigate = useNavigate();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -27,6 +26,7 @@ const MasterTracker = () => {
   const [lastSelectedIndex, setLastSelectedIndex] = useState(-1);
   const [filters, setFilters] = useState({});
   const [massSearchShots, setMassSearchShots] = useState([]);
+  const navigate = useNavigate();
 
   const handleAddShot = () => setIsAddModalOpen(true);
   const handleCloseAddModal = () => setIsAddModalOpen(false);
@@ -143,24 +143,6 @@ const MasterTracker = () => {
     });
   }, [trackerData, filters, massSearchShots]);
 
-  const handleShotClick = (index, event) => {
-    const entry = filteredData[index];
-    if (event.ctrlKey) {
-      setSelectedEntries(prev => 
-        prev.includes(entry.id) ? prev.filter(id => id !== entry.id) : [...prev, entry.id]
-      );
-      setLastSelectedIndex(index);
-    } else if (event.shiftKey && lastSelectedIndex !== -1) {
-      const start = Math.min(lastSelectedIndex, index);
-      const end = Math.max(lastSelectedIndex, index);
-      const newSelection = filteredData.slice(start, end + 1).map(e => e.id);
-      setSelectedEntries(prev => [...new Set([...prev, ...newSelection])]);
-    } else {
-      setSelectedEntries([entry.id]);
-      setLastSelectedIndex(index);
-    }
-  };
-
   return (
     <div className="relative min-h-screen overflow-hidden flex flex-col">
       <LiveBackground />
@@ -182,7 +164,7 @@ const MasterTracker = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleAddShot}
+                onClick={() => setIsAddModalOpen(true)}
                 className="bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-green-500 hover:to-blue-600 transition duration-300 ease-in-out flex items-center text-sm"
               >
                 <Plus size={16} className="mr-1" />
@@ -327,7 +309,7 @@ const MasterTracker = () => {
           </table>
         </div>
       </div>
-      <AddShotModal isOpen={isAddModalOpen} onClose={handleCloseAddModal} onSubmit={handleSubmitShot} headings={headings} />
+      <AddShotModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSubmit={handleSubmitShot} headings={headings} />
       <PreviewModal isOpen={isPreviewModalOpen} onClose={() => setIsPreviewModalOpen(false)} onConfirm={handleConfirmUpload} data={previewData} headings={headings} />
       <EditModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} onSave={handleSaveEdit} entry={editingEntry} headings={headings} />
       <MassSearchModal isOpen={isMassSearchModalOpen} onClose={() => setIsMassSearchModalOpen(false)} onSubmit={handleMassSearch} />
