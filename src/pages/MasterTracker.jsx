@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Plus, Upload, Download } from 'lucide-react';
+import { ArrowLeft, Plus, Upload, Download, MoreVertical, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LiveBackground from '../components/LiveBackground';
 import AddShotModal from '../components/AddShotModal';
 import PreviewModal from '../components/PreviewModal';
+import EditModal from '../components/EditModal';
 import * as XLSX from 'xlsx';
 
 const MasterTracker = () => {
   const navigate = useNavigate();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [trackerData, setTrackerData] = useState([]);
   const [previewData, setPreviewData] = useState([]);
+  const [selectedEntries, setSelectedEntries] = useState([]);
+  const [editingEntry, setEditingEntry] = useState(null);
 
   const handleAddShot = () => {
     setIsAddModalOpen(true);
@@ -23,7 +27,7 @@ const MasterTracker = () => {
   };
 
   const handleSubmitShot = (newShot) => {
-    setTrackerData(prevData => [...prevData, newShot]);
+    setTrackerData(prevData => [...prevData, { ...newShot, id: Date.now() }]);
   };
 
   const handleUploadExcel = (e) => {
@@ -42,14 +46,13 @@ const MasterTracker = () => {
         const ws = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
         
-        // Process the data to match our tracker format
         const headers = data[0];
         const processedData = data.slice(1).map(row => {
           const obj = {};
           headers.forEach((header, index) => {
             obj[header.toLowerCase()] = row[index] || '';
           });
-          return obj;
+          return { ...obj, id: Date.now() + Math.random() };
         });
 
         setPreviewData(processedData);
@@ -75,6 +78,28 @@ const MasterTracker = () => {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "MasterTracker");
     XLSX.writeFile(wb, "MasterTracker.xlsx");
+  };
+
+  const handleCheckboxChange = (id) => {
+    setSelectedEntries(prev => 
+      prev.includes(id) ? prev.filter(entryId => entryId !== id) : [...prev, id]
+    );
+  };
+
+  const handleDeleteSelected = () => {
+    setTrackerData(prev => prev.filter(entry => !selectedEntries.includes(entry.id)));
+    setSelectedEntries([]);
+  };
+
+  const handleEditEntry = (entry) => {
+    setEditingEntry(entry);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = (editedEntry) => {
+    setTrackerData(prev => prev.map(entry => entry.id === editedEntry.id ? editedEntry : entry));
+    setIsEditModalOpen(false);
+    setEditingEntry(null);
   };
 
   const headings = ['Show', 'Shot', 'Department', 'Lead', 'Artist', 'Status', 'StartDate', 'EndDate'];
@@ -124,31 +149,78 @@ const MasterTracker = () => {
                 <Download size={16} className="mr-1" />
                 Export
               </motion.button>
+              {selectedEntries.length > 0 && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleDeleteSelected}
+                  className="bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-red-600 hover:to-pink-600 transition duration-300 ease-in-out flex items-center text-sm"
+                >
+                  <Trash2 size={16} className="mr-1" />
+                  Delete Selected ({selectedEntries.length})
+                </motion.button>
+              )}
             </div>
           </div>
         </div>
 
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-6 border border-white overflow-x-auto">
-          <div className="grid grid-cols-8 gap-4 mb-4">
-            {headings.map((heading, index) => (
-              <div key={index} className="text-center font-bold text-white bg-purple-600 bg-opacity-50 p-2 rounded-lg">
-                {heading}
-              </div>
-            ))}
-          </div>
-          {trackerData.map((row, rowIndex) => (
-            <div key={rowIndex} className="grid grid-cols-8 gap-4 mb-2 text-white">
-              {headings.map((heading, colIndex) => (
-                <div key={colIndex} className="text-center p-2 border-b border-white">
-                  {row[heading.toLowerCase()]}
-                </div>
+          <table className="w-full">
+            <thead>
+              <tr>
+                <th className="px-2 py-1 text-left">
+                  <input
+                    type="checkbox"
+                    onChange={() => {
+                      if (selectedEntries.length === trackerData.length) {
+                        setSelectedEntries([]);
+                      } else {
+                        setSelectedEntries(trackerData.map(entry => entry.id));
+                      }
+                    }}
+                    checked={selectedEntries.length === trackerData.length && trackerData.length > 0}
+                  />
+                </th>
+                {headings.map((heading, index) => (
+                  <th key={index} className="px-2 py-1 text-left text-white font-bold">
+                    {heading}
+                  </th>
+                ))}
+                <th className="px-2 py-1 text-left text-white font-bold">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {trackerData.map((entry) => (
+                <tr key={entry.id} className="border-t border-white border-opacity-20">
+                  <td className="px-2 py-1">
+                    <input
+                      type="checkbox"
+                      checked={selectedEntries.includes(entry.id)}
+                      onChange={() => handleCheckboxChange(entry.id)}
+                    />
+                  </td>
+                  {headings.map((heading, index) => (
+                    <td key={index} className="px-2 py-1 text-white">
+                      {entry[heading.toLowerCase()]}
+                    </td>
+                  ))}
+                  <td className="px-2 py-1">
+                    <button
+                      onClick={() => handleEditEntry(entry)}
+                      className="text-white hover:text-blue-300 transition-colors"
+                    >
+                      <MoreVertical size={16} />
+                    </button>
+                  </td>
+                </tr>
               ))}
-            </div>
-          ))}
+            </tbody>
+          </table>
         </div>
       </div>
       <AddShotModal isOpen={isAddModalOpen} onClose={handleCloseAddModal} onSubmit={handleSubmitShot} headings={headings} />
       <PreviewModal isOpen={isPreviewModalOpen} onClose={() => setIsPreviewModalOpen(false)} onConfirm={handleConfirmUpload} data={previewData} headings={headings} />
+      <EditModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} onSave={handleSaveEdit} entry={editingEntry} headings={headings} />
     </div>
   );
 };
