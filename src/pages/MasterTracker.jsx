@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Plus, Upload, Download, MoreVertical, Trash2, Edit } from 'lucide-react';
+import { ArrowLeft, Plus, Upload, Download, Trash2, Edit, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LiveBackground from '../components/LiveBackground';
 import AddShotModal from '../components/AddShotModal';
@@ -19,25 +19,15 @@ const MasterTracker = () => {
   const [selectedEntries, setSelectedEntries] = useState([]);
   const [editingEntry, setEditingEntry] = useState(null);
   const [headings, setHeadings] = useState(['Show', 'Shot', 'Department', 'Lead', 'Artist', 'Status', 'StartDate', 'EndDate']);
+  const [bulkUpdateStatus, setBulkUpdateStatus] = useState('');
 
-  const handleAddShot = () => {
-    setIsAddModalOpen(true);
-  };
-
-  const handleCloseAddModal = () => {
-    setIsAddModalOpen(false);
-  };
-
-  const handleSubmitShot = (newShot) => {
-    setTrackerData(prevData => [...prevData, { ...newShot, id: Date.now() }]);
-  };
+  const handleAddShot = () => setIsAddModalOpen(true);
+  const handleCloseAddModal = () => setIsAddModalOpen(false);
+  const handleSubmitShot = (newShot) => setTrackerData(prevData => [...prevData, { ...newShot, id: Date.now() }]);
 
   const handleUploadExcel = (e) => {
     const file = e.target.files[0];
-    if (!file) {
-      console.error('No file selected');
-      return;
-    }
+    if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (evt) => {
@@ -62,9 +52,6 @@ const MasterTracker = () => {
       } catch (error) {
         console.error('Error processing Excel file:', error);
       }
-    };
-    reader.onerror = (error) => {
-      console.error('Error reading file:', error);
     };
     reader.readAsBinaryString(file);
   };
@@ -114,6 +101,16 @@ const MasterTracker = () => {
     ));
   };
 
+  const handleBulkStatusUpdate = () => {
+    if (bulkUpdateStatus && selectedEntries.length > 0) {
+      setTrackerData(prev => prev.map(entry => 
+        selectedEntries.includes(entry.id) ? { ...entry, status: bulkUpdateStatus } : entry
+      ));
+      setSelectedEntries([]);
+      setBulkUpdateStatus('');
+    }
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden flex flex-col">
       <LiveBackground />
@@ -160,15 +157,33 @@ const MasterTracker = () => {
                 Export
               </motion.button>
               {selectedEntries.length > 0 && (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleDeleteSelected}
-                  className="bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-red-600 hover:to-pink-600 transition duration-300 ease-in-out flex items-center text-sm"
-                >
-                  <Trash2 size={16} className="mr-1" />
-                  Delete Selected ({selectedEntries.length})
-                </motion.button>
+                <>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleDeleteSelected}
+                    className="bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-red-600 hover:to-pink-600 transition duration-300 ease-in-out flex items-center text-sm"
+                  >
+                    <Trash2 size={16} className="mr-1" />
+                    Delete Selected ({selectedEntries.length})
+                  </motion.button>
+                  <div className="flex items-center">
+                    <StatusDropdown
+                      currentStatus={bulkUpdateStatus}
+                      onStatusChange={setBulkUpdateStatus}
+                    />
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleBulkStatusUpdate}
+                      className="ml-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold py-2 px-3 rounded-full shadow-lg hover:from-indigo-600 hover:to-purple-600 transition duration-300 ease-in-out flex items-center text-sm"
+                      disabled={!bulkUpdateStatus}
+                    >
+                      <CheckCircle size={16} className="mr-1" />
+                      Update Status
+                    </motion.button>
+                  </div>
+                </>
               )}
             </div>
           </div>
