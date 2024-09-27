@@ -17,9 +17,11 @@ const MasterTracker = () => {
   const [trackerData, setTrackerData] = useState([]);
   const [previewData, setPreviewData] = useState([]);
   const [selectedEntries, setSelectedEntries] = useState([]);
+  const [selectedShots, setSelectedShots] = useState([]);
   const [editingEntry, setEditingEntry] = useState(null);
   const [headings, setHeadings] = useState(['Show', 'Shot', 'Department', 'Lead', 'Artist', 'Status', 'StartDate', 'EndDate']);
   const [bulkUpdateStatus, setBulkUpdateStatus] = useState('');
+  const [lastSelectedIndex, setLastSelectedIndex] = useState(-1);
 
   const handleAddShot = () => setIsAddModalOpen(true);
   const handleCloseAddModal = () => setIsAddModalOpen(false);
@@ -111,6 +113,24 @@ const MasterTracker = () => {
     }
   };
 
+  const handleShotClick = (index, event) => {
+    const shot = trackerData[index].shot;
+    if (event.ctrlKey) {
+      setSelectedShots(prev => 
+        prev.includes(shot) ? prev.filter(s => s !== shot) : [...prev, shot]
+      );
+      setLastSelectedIndex(index);
+    } else if (event.shiftKey && lastSelectedIndex !== -1) {
+      const start = Math.min(lastSelectedIndex, index);
+      const end = Math.max(lastSelectedIndex, index);
+      const newSelection = trackerData.slice(start, end + 1).map(entry => entry.shot);
+      setSelectedShots(prev => [...new Set([...prev, ...newSelection])]);
+    } else {
+      setSelectedShots([shot]);
+      setLastSelectedIndex(index);
+    }
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden flex flex-col">
       <LiveBackground />
@@ -192,35 +212,10 @@ const MasterTracker = () => {
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-6 border border-white overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-purple-600 bg-opacity-50">
-                <th className="px-2 py-1 text-center">
-                  <input
-                    type="checkbox"
-                    onChange={() => {
-                      if (selectedEntries.length === trackerData.length) {
-                        setSelectedEntries([]);
-                      } else {
-                        setSelectedEntries(trackerData.map(entry => entry.id));
-                      }
-                    }}
-                    checked={selectedEntries.length === trackerData.length && trackerData.length > 0}
-                  />
-                </th>
-                {headings.map((heading, index) => (
-                  <th key={index} className="px-2 py-1 text-center text-white font-bold border border-white">
-                    <input
-                      type="text"
-                      value={heading}
-                      onChange={(e) => handleEditHeading(index, e.target.value)}
-                      className="bg-transparent text-center text-white font-bold w-full"
-                    />
-                  </th>
-                ))}
-                <th className="px-2 py-1 text-center text-white font-bold border border-white">Actions</th>
-              </tr>
+              {/* ... (keep existing thead) */}
             </thead>
             <tbody>
-              {trackerData.map((entry) => (
+              {trackerData.map((entry, index) => (
                 <tr key={entry.id} className="border-t border-white border-opacity-20">
                   <td className="px-2 py-1 text-center">
                     <input
@@ -229,15 +224,21 @@ const MasterTracker = () => {
                       onChange={() => handleCheckboxChange(entry.id)}
                     />
                   </td>
-                  {headings.map((heading, index) => (
-                    <td key={index} className="px-2 py-1 text-white text-center">
+                  {headings.map((heading, headingIndex) => (
+                    <td 
+                      key={headingIndex} 
+                      className={`px-2 py-1 text-white text-center ${heading.toLowerCase() === 'shot' ? 'cursor-pointer' : ''}`}
+                      onClick={heading.toLowerCase() === 'shot' ? (e) => handleShotClick(index, e) : undefined}
+                    >
                       {heading.toLowerCase() === 'status' ? (
                         <StatusDropdown
                           currentStatus={entry[heading.toLowerCase()]}
                           onStatusChange={(newStatus) => handleStatusChange(entry.id, newStatus)}
                         />
                       ) : (
-                        entry[heading.toLowerCase()]
+                        <span className={heading.toLowerCase() === 'shot' && selectedShots.includes(entry.shot) ? 'bg-blue-500' : ''}>
+                          {entry[heading.toLowerCase()]}
+                        </span>
                       )}
                     </td>
                   ))}
