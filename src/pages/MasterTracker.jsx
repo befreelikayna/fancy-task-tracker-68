@@ -23,7 +23,6 @@ const MasterTracker = () => {
   const [editingEntry, setEditingEntry] = useState(null);
   const [headings, setHeadings] = useState(['Show', 'Shot', 'Department', 'Lead', 'Artist', 'Status', 'StartDate', 'EndDate']);
   const [bulkUpdateStatus, setBulkUpdateStatus] = useState('');
-  const [lastSelectedIndex, setLastSelectedIndex] = useState(-1);
   const [filters, setFilters] = useState({});
   const [massSearchShots, setMassSearchShots] = useState([]);
   const navigate = useNavigate();
@@ -281,7 +280,6 @@ const MasterTracker = () => {
                     <td 
                       key={headingIndex} 
                       className={`px-2 py-1 text-white text-center ${heading.toLowerCase() === 'shot' ? 'cursor-pointer' : ''}`}
-                      onClick={heading.toLowerCase() === 'shot' ? (e) => handleShotClick(index, e) : undefined}
                     >
                       {heading.toLowerCase() === 'status' ? (
                         <StatusDropdown
