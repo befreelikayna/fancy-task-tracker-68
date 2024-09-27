@@ -108,6 +108,12 @@ const MasterTracker = () => {
     setHeadings(prev => prev.map((heading, i) => i === index ? newHeading : heading));
   };
 
+  const handleStatusChange = (id, newStatus) => {
+    setTrackerData(prev => prev.map(entry => 
+      entry.id === id ? { ...entry, status: newStatus } : entry
+    ));
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden flex flex-col">
       <LiveBackground />
@@ -167,7 +173,7 @@ const MasterTracker = () => {
             </div>
           </div>
         </div>
-
+        
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-6 border border-white overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -213,10 +219,7 @@ const MasterTracker = () => {
                       {heading.toLowerCase() === 'status' ? (
                         <StatusDropdown
                           currentStatus={entry[heading.toLowerCase()]}
-                          onStatusChange={(newStatus) => {
-                            const updatedEntry = { ...entry, [heading.toLowerCase()]: newStatus };
-                            handleSaveEdit(updatedEntry);
-                          }}
+                          onStatusChange={(newStatus) => handleStatusChange(entry.id, newStatus)}
                         />
                       ) : (
                         entry[heading.toLowerCase()]
