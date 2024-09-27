@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const statusOptions = [
   { value: 'ADD', color: 'bg-red-500' },
@@ -16,55 +17,43 @@ const statusOptions = [
 
 const StatusDropdown = ({ currentStatus, onStatusChange }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
-  const buttonRef = useRef(null);
   const currentOption = statusOptions.find(option => option.value === currentStatus) || statusOptions[0];
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && !buttonRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  const handleStatusSelect = (newStatus) => {
+    onStatusChange(newStatus);
+    setIsOpen(false);
+  };
 
   return (
-    <div className="relative inline-block text-left" ref={dropdownRef}>
-      <div>
-        <button
-          ref={buttonRef}
-          type="button"
-          className={`inline-flex justify-between items-center w-24 rounded-full px-2 py-1 text-xs font-medium text-white ${currentOption.color} hover:bg-opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75`}
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {currentStatus || 'Select'}
-          <ChevronDown className="ml-1 h-3 w-3" aria-hidden="true" />
-        </button>
-      </div>
-      {isOpen && (
-        <div className="absolute left-0 mt-1 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-          <div className="py-1 max-h-48 overflow-auto" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+    <>
+      <button
+        type="button"
+        className={`inline-flex justify-between items-center w-24 rounded-full px-2 py-1 text-xs font-medium text-white ${currentOption.color} hover:bg-opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75`}
+        onClick={() => setIsOpen(true)}
+      >
+        {currentStatus || 'Select'}
+        <ChevronDown className="ml-1 h-3 w-3" aria-hidden="true" />
+      </button>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Select Status</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-2 gap-4 py-4">
             {statusOptions.map((option) => (
               <button
                 key={option.value}
-                className={`${option.color} text-white group flex rounded-md items-center w-full px-2 py-1 text-xs`}
-                onClick={() => {
-                  onStatusChange(option.value);
-                  setIsOpen(false);
-                }}
+                className={`${option.color} text-white group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                onClick={() => handleStatusSelect(option.value)}
               >
                 {option.value}
               </button>
             ))}
           </div>
-        </div>
-      )}
-    </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
