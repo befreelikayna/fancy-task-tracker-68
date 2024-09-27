@@ -28,26 +28,38 @@ const MasterTracker = () => {
 
   const handleUploadExcel = (e) => {
     const file = e.target.files[0];
+    if (!file) {
+      console.error('No file selected');
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (evt) => {
-      const bstr = evt.target.result;
-      const wb = XLSX.read(bstr, { type: 'binary' });
-      const wsname = wb.SheetNames[0];
-      const ws = wb.Sheets[wsname];
-      const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
-      
-      // Process the data to match our tracker format
-      const headers = data[0];
-      const processedData = data.slice(1).map(row => {
-        const obj = {};
-        headers.forEach((header, index) => {
-          obj[header.toLowerCase()] = row[index] || '';
+      try {
+        const bstr = evt.target.result;
+        const wb = XLSX.read(bstr, { type: 'binary' });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+        
+        // Process the data to match our tracker format
+        const headers = data[0];
+        const processedData = data.slice(1).map(row => {
+          const obj = {};
+          headers.forEach((header, index) => {
+            obj[header.toLowerCase()] = row[index] || '';
+          });
+          return obj;
         });
-        return obj;
-      });
 
-      setPreviewData(processedData);
-      setIsPreviewModalOpen(true);
+        setPreviewData(processedData);
+        setIsPreviewModalOpen(true);
+      } catch (error) {
+        console.error('Error processing Excel file:', error);
+      }
+    };
+    reader.onerror = (error) => {
+      console.error('Error reading file:', error);
     };
     reader.readAsBinaryString(file);
   };
