@@ -1,17 +1,10 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 
-const AddShotModal = ({ isOpen, onClose, onSubmit }) => {
-  const [formData, setFormData] = useState({
-    show: '',
-    shot: '',
-    department: '',
-    lead: '',
-    artist: '',
-    status: '',
-    startDate: '',
-    endDate: '',
-  });
+const AddShotModal = ({ isOpen, onClose, onSubmit, headings }) => {
+  const [formData, setFormData] = useState(
+    headings.reduce((acc, heading) => ({ ...acc, [heading.toLowerCase()]: '' }), {})
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,16 +32,16 @@ const AddShotModal = ({ isOpen, onClose, onSubmit }) => {
           </button>
         </div>
         <form onSubmit={handleSubmit}>
-          {Object.keys(formData).map((key) => (
-            <div key={key} className="mb-4">
-              <label htmlFor={key} className="block text-sm font-medium text-gray-700 mb-1">
-                {key.charAt(0).toUpperCase() + key.slice(1)}
+          {headings.map((heading) => (
+            <div key={heading} className="mb-4">
+              <label htmlFor={heading.toLowerCase()} className="block text-sm font-medium text-gray-700 mb-1">
+                {heading}
               </label>
               <input
-                type={key.includes('Date') ? 'date' : 'text'}
-                id={key}
-                name={key}
-                value={formData[key]}
+                type={heading.includes('Date') ? 'date' : 'text'}
+                id={heading.toLowerCase()}
+                name={heading.toLowerCase()}
+                value={formData[heading.toLowerCase()]}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-md"
                 required

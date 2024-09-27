@@ -4,19 +4,22 @@ import { ArrowLeft, Plus, Upload, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LiveBackground from '../components/LiveBackground';
 import AddShotModal from '../components/AddShotModal';
+import PreviewModal from '../components/PreviewModal';
 import * as XLSX from 'xlsx';
 
 const MasterTracker = () => {
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [trackerData, setTrackerData] = useState([]);
+  const [previewData, setPreviewData] = useState([]);
 
   const handleAddShot = () => {
-    setIsModalOpen(true);
+    setIsAddModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleCloseAddModal = () => {
+    setIsAddModalOpen(false);
   };
 
   const handleSubmitShot = (newShot) => {
@@ -32,9 +35,16 @@ const MasterTracker = () => {
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
       const data = XLSX.utils.sheet_to_json(ws);
-      setTrackerData(prevData => [...prevData, ...data]);
+      setPreviewData(data);
+      setIsPreviewModalOpen(true);
     };
     reader.readAsBinaryString(file);
+  };
+
+  const handleConfirmUpload = () => {
+    setTrackerData(prevData => [...prevData, ...previewData]);
+    setIsPreviewModalOpen(false);
+    setPreviewData([]);
   };
 
   const handleExport = () => {
@@ -43,6 +53,8 @@ const MasterTracker = () => {
     XLSX.utils.book_append_sheet(wb, ws, "MasterTracker");
     XLSX.writeFile(wb, "MasterTracker.xlsx");
   };
+
+  const headings = ['Show', 'Shot', 'Department', 'Lead', 'Artist', 'Status', 'StartDate', 'EndDate'];
 
   return (
     <div className="relative min-h-screen overflow-hidden flex flex-col">
@@ -94,31 +106,26 @@ const MasterTracker = () => {
         </div>
 
         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg shadow-2xl p-4 sm:p-6 border border-white overflow-x-auto">
-          <div className="grid grid-cols-8 gap-4 text-white font-bold mb-4">
-            <div>Show</div>
-            <div>Shot</div>
-            <div>Department</div>
-            <div>Lead</div>
-            <div>Artist</div>
-            <div>Status</div>
-            <div>StartDate</div>
-            <div>EndDate</div>
+          <div className="grid grid-cols-8 gap-4 mb-4">
+            {headings.map((heading, index) => (
+              <div key={index} className="text-center font-bold text-white bg-purple-600 bg-opacity-50 p-2 rounded-lg">
+                {heading}
+              </div>
+            ))}
           </div>
-          {trackerData.map((row, index) => (
-            <div key={index} className="grid grid-cols-8 gap-4 text-white mb-2">
-              <div>{row.show}</div>
-              <div>{row.shot}</div>
-              <div>{row.department}</div>
-              <div>{row.lead}</div>
-              <div>{row.artist}</div>
-              <div>{row.status}</div>
-              <div>{row.startDate}</div>
-              <div>{row.endDate}</div>
+          {trackerData.map((row, rowIndex) => (
+            <div key={rowIndex} className="grid grid-cols-8 gap-4 mb-2 text-white">
+              {headings.map((heading, colIndex) => (
+                <div key={colIndex} className="text-center p-2 border-b border-white">
+                  {row[heading.toLowerCase()]}
+                </div>
+              ))}
             </div>
           ))}
         </div>
       </div>
-      <AddShotModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleSubmitShot} />
+      <AddShotModal isOpen={isAddModalOpen} onClose={handleCloseAddModal} onSubmit={handleSubmitShot} headings={headings} />
+      <PreviewModal isOpen={isPreviewModalOpen} onClose={() => setIsPreviewModalOpen(false)} onConfirm={handleConfirmUpload} data={previewData} headings={headings} />
     </div>
   );
 };
