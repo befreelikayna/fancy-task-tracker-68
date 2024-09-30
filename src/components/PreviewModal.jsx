@@ -64,6 +64,7 @@ const PreviewModal = ({ isOpen, onClose, onConfirm, data, headings }) => {
                   checked={isUpdateMode}
                   onCheckedChange={setIsUpdateMode}
                   id="update-mode"
+                  className="data-[state=checked]:bg-blue-500"
                 />
                 <label htmlFor="update-mode" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   {isUpdateMode ? "Update existing data" : "Add new shots"}
