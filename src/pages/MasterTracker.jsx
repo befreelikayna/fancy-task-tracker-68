@@ -21,7 +21,7 @@ const MasterTracker = () => {
   const [previewData, setPreviewData] = useState([]);
   const [selectedEntries, setSelectedEntries] = useState([]);
   const [editingEntry, setEditingEntry] = useState(null);
-  const [headings] = useState(['Show', 'Shot', 'Department', 'Lead', 'Artist', 'Status', 'StartDate', 'EndDate']);
+  const [headings] = useState(['Show', 'Shot', 'Department', 'MDs', 'Lead', 'Artist', 'Status', 'StartDate', 'EndDate']);
   const [bulkUpdateStatus, setBulkUpdateStatus] = useState('');
   const [filters, setFilters] = useState({});
   const [massSearchShots, setMassSearchShots] = useState([]);

@@ -143,7 +143,8 @@ const PreviewModal = ({ isOpen, onClose, onConfirm, data, headings }) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onConfirm(editableData, isUpdateMode, masterColumn, columnsToUpdate)}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center"
+                className="px-4 py-2 bg-blue-500 text-white rounded-m
+d hover:bg-blue-600 transition-colors flex items-center"
               >
                 <Check size={16} className="mr-2" />
                 {isUpdateMode ? "Update Data" : "Confirm Upload"}
