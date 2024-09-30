@@ -1,7 +1,38 @@
-import React from 'react';
-import { X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Check, RefreshCw } from 'lucide-react';
+import { Switch } from "@/components/ui/switch";
+import EditableCell from './EditableCell';
 
 const PreviewModal = ({ isOpen, onClose, onConfirm, data, headings }) => {
+  const [editableData, setEditableData] = useState(data);
+  const [isUpdateMode, setIsUpdateMode] = useState(false);
+  const [masterColumn, setMasterColumn] = useState('');
+  const [columnsToUpdate, setColumnsToUpdate] = useState([]);
+
+  useEffect(() => {
+    setEditableData(data);
+  }, [data]);
+
+  const handleCellEdit = (rowIndex, columnName, newValue) => {
+    setEditableData(prevData => 
+      prevData.map((row, index) => 
+        index === rowIndex ? { ...row, [columnName.toLowerCase()]: newValue } : row
+      )
+    );
+  };
+
+  const handleMasterColumnChange = (e) => {
+    setMasterColumn(e.target.value);
+  };
+
+  const handleColumnToUpdateChange = (columnName) => {
+    setColumnsToUpdate(prev => 
+      prev.includes(columnName) 
+        ? prev.filter(col => col !== columnName)
+        : [...prev, columnName]
+    );
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -13,6 +44,49 @@ const PreviewModal = ({ isOpen, onClose, onConfirm, data, headings }) => {
             <X size={24} />
           </button>
         </div>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-2">
+            <Switch
+              checked={isUpdateMode}
+              onCheckedChange={setIsUpdateMode}
+              id="update-mode"
+            />
+            <label htmlFor="update-mode">
+              {isUpdateMode ? "Update existing data" : "Add new shots"}
+            </label>
+          </div>
+          {isUpdateMode && (
+            <div className="flex items-center space-x-2">
+              <select
+                value={masterColumn}
+                onChange={handleMasterColumnChange}
+                className="border p-1 rounded"
+              >
+                <option value="">Select master column</option>
+                {headings.map(heading => (
+                  <option key={heading} value={heading.toLowerCase()}>{heading}</option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+        {isUpdateMode && (
+          <div className="mb-4">
+            <p className="font-bold mb-2">Select columns to update:</p>
+            <div className="flex flex-wrap gap-2">
+              {headings.map(heading => (
+                <label key={heading} className="flex items-center space-x-1">
+                  <input
+                    type="checkbox"
+                    checked={columnsToUpdate.includes(heading.toLowerCase())}
+                    onChange={() => handleColumnToUpdateChange(heading.toLowerCase())}
+                  />
+                  <span>{heading}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
@@ -25,11 +99,14 @@ const PreviewModal = ({ isOpen, onClose, onConfirm, data, headings }) => {
               </tr>
             </thead>
             <tbody>
-              {data.map((row, rowIndex) => (
+              {editableData.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   {headings.map((heading, colIndex) => (
                     <td key={colIndex} className="border border-gray-300 p-2">
-                      {row[heading.toLowerCase()]}
+                      <EditableCell
+                        value={row[heading.toLowerCase()]}
+                        onChange={(newValue) => handleCellEdit(rowIndex, heading, newValue)}
+                      />
                     </td>
                   ))}
                 </tr>
@@ -45,10 +122,11 @@ const PreviewModal = ({ isOpen, onClose, onConfirm, data, headings }) => {
             Cancel
           </button>
           <button
-            onClick={onConfirm}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+            onClick={() => onConfirm(editableData, isUpdateMode, masterColumn, columnsToUpdate)}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors flex items-center"
           >
-            Confirm Upload
+            <Check size={16} className="mr-2" />
+            {isUpdateMode ? "Update Data" : "Confirm Upload"}
           </button>
         </div>
       </div>

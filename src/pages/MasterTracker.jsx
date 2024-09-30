@@ -63,8 +63,23 @@ const MasterTracker = () => {
     reader.readAsBinaryString(file);
   };
 
-  const handleConfirmUpload = () => {
-    setTrackerData(prevData => [...prevData, ...previewData]);
+  const handleConfirmUpload = (editedData, isUpdateMode, masterColumn, columnsToUpdate) => {
+    if (isUpdateMode) {
+      setTrackerData(prevData => {
+        const updatedData = [...prevData];
+        editedData.forEach(newEntry => {
+          const existingIndex = updatedData.findIndex(entry => entry[masterColumn] === newEntry[masterColumn]);
+          if (existingIndex !== -1) {
+            columnsToUpdate.forEach(column => {
+              updatedData[existingIndex][column] = newEntry[column];
+            });
+          }
+        });
+        return updatedData;
+      });
+    } else {
+      setTrackerData(prevData => [...prevData, ...editedData]);
+    }
     setIsPreviewModalOpen(false);
     setPreviewData([]);
   };
@@ -109,21 +124,16 @@ const MasterTracker = () => {
     setSelectedEntries(prev => {
       const isSelected = prev.includes(id);
       if (isSelected) {
-        // If the entry is already selected, remove it from the selection
         return prev.filter(entryId => entryId !== id);
       } else {
-        // If the entry is not selected, add it to the selection
         if (event.ctrlKey || event.metaKey) {
-          // Add to existing selection if Ctrl/Cmd is pressed
           return [...prev, id];
         } else if (event.shiftKey && lastSelectedIndex !== -1) {
-          // Select range if Shift is pressed
           const start = Math.min(lastSelectedIndex, index);
           const end = Math.max(lastSelectedIndex, index);
           const idsToSelect = trackerData.slice(start, end + 1).map(entry => entry.id);
           return [...new Set([...prev, ...idsToSelect])];
         } else {
-          // Replace selection if no modifier key is pressed
           return [id];
         }
       }
@@ -359,7 +369,13 @@ const MasterTracker = () => {
         </div>
       </div>
       <AddShotModal isOpen={isAddModalOpen} onClose={handleCloseAddModal} onSubmit={handleSubmitShot} headings={headings} />
-      <PreviewModal isOpen={isPreviewModalOpen} onClose={() => setIsPreviewModalOpen(false)} onConfirm={handleConfirmUpload} data={previewData} headings={headings} />
+      <PreviewModal
+        isOpen={isPreviewModalOpen}
+        onClose={() => setIsPreviewModalOpen(false)}
+        onConfirm={handleConfirmUpload}
+        data={previewData}
+        headings={headings}
+      />
       <EditModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} onSave={handleSaveEdit} entry={editingEntry} headings={headings} />
       <MassSearchModal isOpen={isMassSearchModalOpen} onClose={() => setIsMassSearchModalOpen(false)} onSubmit={handleMassSearch} />
       <FilterModal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)} onApply={handleApplyFilters} headings={headings} />
