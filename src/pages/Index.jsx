@@ -9,10 +9,10 @@ const Index = () => {
   }, []);
 
   const buttons = [
-    { name: "Video Call", icon: "📹", color: "from-blue-500 to-cyan-500" },
-    { name: "Groups", icon: "👥", color: "from-purple-500 to-pink-500" },
-    { name: "MeetUP", icon: "🤝", color: "from-green-500 to-teal-500" },
-    { name: "Custom Video Call", icon: "🎥", color: "from-orange-500 to-red-500" },
+    { name: "Video Call", icon: "📹", color: "from-blue-200 to-indigo-300" },
+    { name: "Groups", icon: "👥", color: "from-pink-200 to-rose-300" },
+    { name: "MeetUP", icon: "🤝", color: "from-green-200 to-emerald-300" },
+    { name: "Custom Video Call", icon: "🎥", color: "from-amber-200 to-orange-300" },
   ];
 
   return (
@@ -33,7 +33,7 @@ const Index = () => {
           {buttons.map((button, index) => (
             <Button
               key={index}
-              className={`w-full text-lg py-6 bg-gradient-to-r ${button.color} text-white rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl hover:brightness-110`}
+              className={`w-full text-lg py-6 bg-gradient-to-r ${button.color} text-white rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-glow`}
             >
               <span className="mr-2">{button.icon}</span>
               {button.name}
