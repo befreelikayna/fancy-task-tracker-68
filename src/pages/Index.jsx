@@ -30,9 +30,19 @@ const Index = () => {
             alt="Ankita Sharma" 
             className="w-32 h-32 rounded-full object-cover mb-4"
           />
-          <h1 className="text-4xl sm:text-6xl font-bold mb-16 shadow-text text-center">
+          <h1 className="text-4xl sm:text-6xl font-bold mb-4 shadow-text text-center">
             Ankita Sharma
           </h1>
+          
+          {/* Social Media Buttons */}
+          <div className="flex justify-center space-x-4 mb-12">
+            <a href="https://www.instagram.com/ankitasharmmaa" target="_blank" rel="noopener noreferrer">
+              <img src="/Instagram.png" alt="Instagram" className="w-8 h-8 object-contain" />
+            </a>
+            <a href="https://telegram.me/ankiitasharmmaa" target="_blank" rel="noopener noreferrer">
+              <img src="/Telegram.png" alt="Telegram" className="w-8 h-8 object-contain" />
+            </a>
+          </div>
         </motion.div>
         
         {/* Button container */}
