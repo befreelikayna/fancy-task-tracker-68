@@ -17,7 +17,7 @@ const Index = () => {
           transition={{ duration: 1, ease: "easeOut" }}
           className="text-4xl sm:text-6xl font-bold mt-8 mb-16 shadow-text text-center"
         >
-          Welcome, Ankita Sharma
+          Ankita Sharma
         </motion.h1>
         {/* Content area */}
         <div className="flex-grow flex items-center justify-center">
