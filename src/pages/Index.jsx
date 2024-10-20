@@ -9,10 +9,10 @@ const Index = () => {
   }, []);
 
   const buttons = [
-    { name: "Video Call", icon: "📹", color: "from-blue-200 to-indigo-300" },
-    { name: "Groups", icon: "👥", color: "from-pink-200 to-rose-300" },
-    { name: "MeetUP", icon: "🤝", color: "from-green-200 to-emerald-300" },
-    { name: "Custom Video Call", icon: "🎥", color: "from-amber-200 to-orange-300" },
+    { name: "Video Call", icon: "📹", color: "from-blue-600 to-indigo-800" },
+    { name: "Groups", icon: "👥", color: "from-purple-600 to-pink-800" },
+    { name: "MeetUP", icon: "🤝", color: "from-green-600 to-teal-800" },
+    { name: "Custom Video Call", icon: "🎥", color: "from-amber-600 to-orange-800" },
   ];
 
   return (
