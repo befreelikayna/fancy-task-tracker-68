@@ -76,14 +76,22 @@ module.exports = {
             "background-position": "right center",
           },
         },
+        shimmer: {
+          '0%': { backgroundPosition: '200% 0' },
+          '100%': { backgroundPosition: '-200% 0' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "gradient-x": "gradient-x 15s ease infinite",
+        shimmer: 'shimmer 3s linear infinite',
       },
       boxShadow: {
-        glow: '0 0 15px 5px rgba(255, 255, 255, 0.7)',
+        'gold-flare': '0 0 15px 2px rgba(255, 215, 0, 0.5)',
+      },
+      borderColor: {
+        'gold-shimmer': 'linear-gradient(90deg, #FFD700, #FFA500, #FFD700)',
       },
     },
   },
