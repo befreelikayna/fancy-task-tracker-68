@@ -7,35 +7,43 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { DatePicker } from "@/components/ui/date-picker";
 import { toast } from "sonner";
+import { ChevronLeft } from 'lucide-react';
+import SelectModelModal from './SelectModelModal';
 
 const VideoCallModal = ({ isOpen, onClose }) => {
   const [contactMethod, setContactMethod] = useState('');
   const [username, setUsername] = useState('');
   const [selectedPlan, setSelectedPlan] = useState('');
-  const [selectedModel, setSelectedModel] = useState('Model 1');
+  const [selectedModel, setSelectedModel] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState('');
   const [meetingPlatform, setMeetingPlatform] = useState('');
+  const [isSelectModelOpen, setIsSelectModelOpen] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
 
   const handleContactMethodSelect = (method) => {
     setContactMethod(method);
+    setCurrentStep(1);
   };
 
   const handlePlanSelect = (plan) => {
     setSelectedPlan(plan);
+    if (selectedModel && selectedModel.name === 'Model 3' && plan !== 'Video Call 30 Minutes') {
+      setSelectedModel(null);
+    }
+    setCurrentStep(2);
   };
 
   const handleModelSelect = (model) => {
-    if (model === 'Model 3' && selectedPlan !== 'Video Call 30 Minutes') {
-      toast.error("Model 3 can only be selected for video calls of 30 minutes. Please check Custom Video Call.");
-      return;
-    }
     setSelectedModel(model);
+    setIsSelectModelOpen(false);
+    setCurrentStep(3);
   };
 
   const handleDateTimeSelect = () => {
     if (selectedDate && selectedTime) {
       toast.success("Slot is available");
+      setCurrentStep(4);
     } else {
       toast.error("Please select both date and time");
     }
@@ -50,13 +58,14 @@ const VideoCallModal = ({ isOpen, onClose }) => {
     }
   };
 
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] bg-gray-900 text-gray-100 border-gray-700">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-gray-100">Video Call Booking</DialogTitle>
-        </DialogHeader>
-        <div className="grid gap-6 py-4">
+  const handleBack = () => {
+    setCurrentStep(Math.max(0, currentStep - 1));
+  };
+
+  const renderStep = () => {
+    switch (currentStep) {
+      case 0:
+        return (
           <div className="grid grid-cols-3 gap-4">
             {['Instagram', 'Telegram', 'Whatsapp'].map((method) => (
               <Button 
@@ -68,47 +77,51 @@ const VideoCallModal = ({ isOpen, onClose }) => {
               </Button>
             ))}
           </div>
-          
-          {contactMethod && (
-            <Input
-              placeholder={`Enter ${contactMethod} ${contactMethod === 'Whatsapp' ? 'Number' : 'Username'}`}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="bg-gray-800 text-gray-100 border-gray-700"
-            />
-          )}
-          
-          <Select onValueChange={handlePlanSelect}>
-            <SelectTrigger className="bg-gray-800 text-gray-100 border-gray-700">
-              <SelectValue placeholder="Select Plan" />
-            </SelectTrigger>
-            <SelectContent className="bg-gray-800 text-gray-100 border-gray-700">
-              <SelectItem value="Video Call 10 Minutes">Video Call 10 Minutes</SelectItem>
-              <SelectItem value="Video Call 15 Minutes">Video Call 15 Minutes</SelectItem>
-              <SelectItem value="Video Call 30 Minutes">Video Call 30 Minutes</SelectItem>
-            </SelectContent>
-          </Select>
-          {selectedPlan && <p className="text-gray-300">Selected Plan: {selectedPlan}</p>}
-          
+        );
+      case 1:
+        return (
+          <Input
+            placeholder={`Enter ${contactMethod} ${contactMethod === 'Whatsapp' ? 'Number' : 'Username'}`}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="bg-gray-800 text-gray-100 border-gray-700"
+          />
+        );
+      case 2:
+        return (
+          <>
+            <Select onValueChange={handlePlanSelect}>
+              <SelectTrigger className="bg-gray-800 text-gray-100 border-gray-700">
+                <SelectValue placeholder="Select Plan" />
+              </SelectTrigger>
+              <SelectContent className="bg-gray-800 text-gray-100 border-gray-700">
+                <SelectItem value="Video Call 10 Minutes">Video Call 10 Minutes</SelectItem>
+                <SelectItem value="Video Call 15 Minutes">Video Call 15 Minutes</SelectItem>
+                <SelectItem value="Video Call 30 Minutes">Video Call 30 Minutes</SelectItem>
+              </SelectContent>
+            </Select>
+            {selectedPlan && <p className="text-gray-300">Selected Plan: {selectedPlan}</p>}
+          </>
+        );
+      case 3:
+        return (
           <div className="space-y-2">
-            <p className="text-gray-300">Select Model:</p>
-            <div className="flex space-x-2">
-              {['Model 1', 'Model 2', 'Model 3'].map((model) => (
-                <Button 
-                  key={model}
-                  onClick={() => handleModelSelect(model)}
-                  className={`bg-gray-800 hover:bg-gray-700 text-gray-100 ${selectedModel === model ? 'ring-2 ring-blue-500' : ''}`}
-                >
-                  {model}
-                </Button>
-              ))}
-            </div>
-            {selectedPlan !== 'Video Call 30 Minutes' && (
-              <p className="text-sm text-red-400">Model 3 can only be selected for video calls of 30 minutes. Please check Custom Video Call.</p>
+            <Button 
+              onClick={() => setIsSelectModelOpen(true)}
+              className="bg-gray-800 hover:bg-gray-700 text-gray-100"
+            >
+              Select Model
+            </Button>
+            {selectedModel && (
+              <div className="flex items-center space-x-2">
+                <img src={selectedModel.image} alt={selectedModel.name} className="w-12 h-12 rounded-full mx-auto object-cover" />
+                <p className="text-gray-300">Selected Model: {selectedModel.name}</p>
+              </div>
             )}
-            {selectedModel && <p className="text-gray-300">Selected Model: {selectedModel}</p>}
           </div>
-          
+        );
+      case 4:
+        return (
           <div className="space-y-2">
             <DatePicker 
               date={selectedDate} 
@@ -139,7 +152,9 @@ const VideoCallModal = ({ isOpen, onClose }) => {
               Check Availability
             </Button>
           </div>
-          
+        );
+      case 5:
+        return (
           <RadioGroup onValueChange={setMeetingPlatform}>
             {['Google Meet', 'Telegram', 'Instagram'].map((platform) => (
               <div key={platform} className="flex items-center space-x-2">
@@ -148,18 +163,45 @@ const VideoCallModal = ({ isOpen, onClose }) => {
               </div>
             ))}
           </RadioGroup>
-          
-          {selectedPlan && <p className="text-gray-300">Price: {getPriceForPlan()}</p>}
-          
-          <Button 
-            onClick={onClose}
-            className="bg-green-600 hover:bg-green-700 text-white"
-          >
-            Confirm
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-[425px] bg-gray-900 text-gray-100 border-gray-700">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-gray-100">Video Call Booking</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-6 py-4">
+            {currentStep > 0 && (
+              <Button onClick={handleBack} className="bg-gray-800 hover:bg-gray-700 text-gray-100 w-fit">
+                <ChevronLeft className="mr-2 h-4 w-4" /> Back
+              </Button>
+            )}
+            {renderStep()}
+            {selectedPlan && <p className="text-gray-300">Price: {getPriceForPlan()}</p>}
+            {currentStep === 5 && (
+              <Button 
+                onClick={onClose}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                Confirm
+              </Button>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+      <SelectModelModal 
+        isOpen={isSelectModelOpen} 
+        onClose={() => setIsSelectModelOpen(false)} 
+        onSelect={handleModelSelect}
+        selectedPlan={selectedPlan}
+      />
+    </>
   );
 };
 
