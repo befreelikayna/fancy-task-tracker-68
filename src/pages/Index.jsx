@@ -30,8 +30,9 @@ const Index = () => {
             alt="Ankita Sharma" 
             className="w-32 h-32 rounded-full object-cover mb-4"
           />
-          <h1 className="text-4xl sm:text-6xl font-bold mb-4 shadow-text text-center">
+          <h1 className="text-4xl sm:text-6xl font-bold mb-4 shadow-text text-center flex items-center">
             Ankita Sharma
+            <img src="/Verified.png" alt="Verified" className="w-6 h-6 ml-2 inline-block" />
           </h1>
           
           {/* Social Media Buttons */}
