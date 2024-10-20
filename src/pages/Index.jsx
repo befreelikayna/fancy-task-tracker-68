@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import LiveBackground from '../components/LiveBackground';
+import VideoCallModal from '../components/VideoCallModal';
 
 const Index = () => {
+  const [isVideoCallModalOpen, setIsVideoCallModalOpen] = useState(false);
+
   useEffect(() => {
     document.title = "Ankita Sharma's Dashboard";
   }, []);
@@ -35,7 +38,6 @@ const Index = () => {
             <img src="/Verified.png" alt="Verified" className="w-6 h-6 ml-2 inline-block" />
           </h1>
           
-          {/* Social Media Buttons */}
           <div className="flex justify-center space-x-4 mb-12">
             <a href="https://www.instagram.com/ankitasharmmaa" target="_blank" rel="noopener noreferrer">
               <img src="/Instagram.png" alt="Instagram" className="w-8 h-8 object-contain" />
@@ -46,12 +48,12 @@ const Index = () => {
           </div>
         </motion.div>
         
-        {/* Button container */}
         <div className="w-full max-w-md flex flex-col items-center space-y-4">
           {buttons.map((button, index) => (
             <Button
               key={index}
               className="w-full text-lg py-6 bg-transparent text-white rounded-full border border-gold-shimmer transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-gold-flare"
+              onClick={() => button.name === "Video Call" && setIsVideoCallModalOpen(true)}
             >
               <span className="mr-2">{button.icon}</span>
               {button.name}
@@ -59,6 +61,7 @@ const Index = () => {
           ))}
         </div>
       </div>
+      <VideoCallModal isOpen={isVideoCallModalOpen} onClose={() => setIsVideoCallModalOpen(false)} />
     </div>
   );
 };
