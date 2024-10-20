@@ -7,7 +7,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { DatePicker } from "@/components/ui/date-picker";
 import { toast } from "sonner";
-import { ChevronLeft } from 'lucide-react';
 import SelectModelModal from './SelectModelModal';
 
 const VideoCallModal = ({ isOpen, onClose }) => {
@@ -19,11 +18,9 @@ const VideoCallModal = ({ isOpen, onClose }) => {
   const [selectedTime, setSelectedTime] = useState('');
   const [meetingPlatform, setMeetingPlatform] = useState('');
   const [isSelectModelOpen, setIsSelectModelOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
 
   const handleContactMethodSelect = (method) => {
     setContactMethod(method);
-    setCurrentStep(1);
   };
 
   const handlePlanSelect = (plan) => {
@@ -31,19 +28,16 @@ const VideoCallModal = ({ isOpen, onClose }) => {
     if (selectedModel && selectedModel.name === 'Model 3' && plan !== 'Video Call 30 Minutes') {
       setSelectedModel(null);
     }
-    setCurrentStep(2);
   };
 
   const handleModelSelect = (model) => {
     setSelectedModel(model);
     setIsSelectModelOpen(false);
-    setCurrentStep(3);
   };
 
   const handleDateTimeSelect = () => {
     if (selectedDate && selectedTime) {
       toast.success("Slot is available");
-      setCurrentStep(4);
     } else {
       toast.error("Please select both date and time");
     }
@@ -58,38 +52,35 @@ const VideoCallModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleBack = () => {
-    setCurrentStep(Math.max(0, currentStep - 1));
-  };
-
-  const renderStep = () => {
-    switch (currentStep) {
-      case 0:
-        return (
-          <div className="grid grid-cols-3 gap-4">
-            {['Instagram', 'Telegram', 'Whatsapp'].map((method) => (
-              <Button 
-                key={method} 
-                onClick={() => handleContactMethodSelect(method)}
-                className="bg-gray-800 hover:bg-gray-700 text-gray-100"
-              >
-                <img src={`/${method}.png`} alt={method} className="w-8 h-8 mx-auto object-cover" />
-              </Button>
-            ))}
-          </div>
-        );
-      case 1:
-        return (
-          <Input
-            placeholder={`Enter ${contactMethod} ${contactMethod === 'Whatsapp' ? 'Number' : 'Username'}`}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="bg-gray-800 text-gray-100 border-gray-700"
-          />
-        );
-      case 2:
-        return (
-          <>
+  return (
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-[425px] bg-gray-900 text-gray-100 border-gray-700">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-gray-100">Video Call Booking</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-6 py-4">
+            <div className="grid grid-cols-3 gap-4">
+              {['Instagram', 'Telegram', 'Whatsapp'].map((method) => (
+                <Button 
+                  key={method} 
+                  onClick={() => handleContactMethodSelect(method)}
+                  className="bg-gray-800 hover:bg-gray-700 text-gray-100"
+                >
+                  <img src={`/${method}.png`} alt={method} className="w-8 h-8 mx-auto object-cover" />
+                </Button>
+              ))}
+            </div>
+            
+            {contactMethod && (
+              <Input
+                placeholder={`Enter ${contactMethod} ${contactMethod === 'Whatsapp' ? 'Number' : 'Username'}`}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="bg-gray-800 text-gray-100 border-gray-700"
+              />
+            )}
+            
             <Select onValueChange={handlePlanSelect}>
               <SelectTrigger className="bg-gray-800 text-gray-100 border-gray-700">
                 <SelectValue placeholder="Select Plan" />
@@ -101,97 +92,70 @@ const VideoCallModal = ({ isOpen, onClose }) => {
               </SelectContent>
             </Select>
             {selectedPlan && <p className="text-gray-300">Selected Plan: {selectedPlan}</p>}
-          </>
-        );
-      case 3:
-        return (
-          <div className="space-y-2">
-            <Button 
-              onClick={() => setIsSelectModelOpen(true)}
-              className="bg-gray-800 hover:bg-gray-700 text-gray-100"
-            >
-              Select Model
-            </Button>
-            {selectedModel && (
-              <div className="flex items-center space-x-2">
-                <img src={selectedModel.image} alt={selectedModel.name} className="w-12 h-12 rounded-full mx-auto object-cover" />
-                <p className="text-gray-300">Selected Model: {selectedModel.name}</p>
-              </div>
-            )}
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-2">
-            <DatePicker 
-              date={selectedDate} 
-              onDateChange={setSelectedDate}
-              className="bg-gray-800 text-gray-100 border-gray-700"
-            />
-            <Select onValueChange={setSelectedTime}>
-              <SelectTrigger className="bg-gray-800 text-gray-100 border-gray-700">
-                <SelectValue placeholder="Select Time" />
-              </SelectTrigger>
-              <SelectContent className="bg-gray-800 text-gray-100 border-gray-700">
-                {Array.from({ length: 10 }, (_, i) => i + 17).map((hour) => (
-                  <SelectItem key={hour} value={`${hour % 12 || 12}:00 ${hour >= 12 ? 'PM' : 'AM'}`}>
-                    {`${hour % 12 || 12}:00 ${hour >= 12 ? 'PM' : 'AM'}`}
-                  </SelectItem>
-                ))}
-                {[1, 2].map((hour) => (
-                  <SelectItem key={hour} value={`${hour}:00 AM`}>
-                    {`${hour}:00 AM`}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button 
-              onClick={handleDateTimeSelect}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              Check Availability
-            </Button>
-          </div>
-        );
-      case 5:
-        return (
-          <RadioGroup onValueChange={setMeetingPlatform}>
-            {['Google Meet', 'Telegram', 'Instagram'].map((platform) => (
-              <div key={platform} className="flex items-center space-x-2">
-                <RadioGroupItem value={platform} id={platform.toLowerCase()} className="border-gray-600" />
-                <Label htmlFor={platform.toLowerCase()} className="text-gray-300">{platform}</Label>
-              </div>
-            ))}
-          </RadioGroup>
-        );
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-[425px] bg-gray-900 text-gray-100 border-gray-700">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-gray-100">Video Call Booking</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-6 py-4">
-            {currentStep > 0 && (
-              <Button onClick={handleBack} className="bg-gray-800 hover:bg-gray-700 text-gray-100 w-fit">
-                <ChevronLeft className="mr-2 h-4 w-4" /> Back
-              </Button>
-            )}
-            {renderStep()}
-            {selectedPlan && <p className="text-gray-300">Price: {getPriceForPlan()}</p>}
-            {currentStep === 5 && (
+            
+            <div className="space-y-2">
               <Button 
-                onClick={onClose}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                onClick={() => setIsSelectModelOpen(true)}
+                className="bg-gray-800 hover:bg-gray-700 text-gray-100"
               >
-                Confirm
+                Select Model
               </Button>
-            )}
+              {selectedModel && (
+                <div className="flex items-center space-x-2">
+                  <img src={selectedModel.image} alt={selectedModel.name} className="w-12 h-12 rounded-full mx-auto object-cover" />
+                  <p className="text-gray-300">Selected Model: {selectedModel.name}</p>
+                </div>
+              )}
+            </div>
+            
+            <div className="space-y-2">
+              <DatePicker 
+                date={selectedDate} 
+                onDateChange={setSelectedDate}
+                className="bg-gray-800 text-gray-100 border-gray-700"
+              />
+              <Select onValueChange={setSelectedTime}>
+                <SelectTrigger className="bg-gray-800 text-gray-100 border-gray-700">
+                  <SelectValue placeholder="Select Time" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 text-gray-100 border-gray-700">
+                  {Array.from({ length: 10 }, (_, i) => i + 17).map((hour) => (
+                    <SelectItem key={hour} value={`${hour % 12 || 12}:00 ${hour >= 12 ? 'PM' : 'AM'}`}>
+                      {`${hour % 12 || 12}:00 ${hour >= 12 ? 'PM' : 'AM'}`}
+                    </SelectItem>
+                  ))}
+                  {[1, 2].map((hour) => (
+                    <SelectItem key={hour} value={`${hour}:00 AM`}>
+                      {`${hour}:00 AM`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button 
+                onClick={handleDateTimeSelect}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Check Availability
+              </Button>
+            </div>
+            
+            <RadioGroup onValueChange={setMeetingPlatform}>
+              {['Google Meet', 'Telegram', 'Instagram'].map((platform) => (
+                <div key={platform} className="flex items-center space-x-2">
+                  <RadioGroupItem value={platform} id={platform.toLowerCase()} className="border-gray-600" />
+                  <Label htmlFor={platform.toLowerCase()} className="text-gray-300">{platform}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+            
+            {selectedPlan && <p className="text-gray-300">Price: {getPriceForPlan()}</p>}
+            
+            <Button 
+              onClick={onClose}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              Confirm
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
