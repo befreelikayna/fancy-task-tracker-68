@@ -46,11 +46,6 @@ const VideoCallModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleModelSelect = (model) => {
-    setSelectedModel(model);
-    setIsSelectModelOpen(false);
-  };
-
   const handleDateTimeSelect = () => {
     if (selectedDate && selectedTime) {
       toast.success("Slot is available");
