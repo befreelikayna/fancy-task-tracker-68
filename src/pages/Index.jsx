@@ -2,18 +2,25 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import LiveBackground from '../components/LiveBackground';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
   useEffect(() => {
     document.title = "Ankita Sharma's Dashboard";
   }, []);
 
+  const navigate = useNavigate();
+
   const buttons = [
-    { name: "Video Call", icon: "📹" },
-    { name: "Groups", icon: "👥" },
-    { name: "MeetUP", icon: "🤝" },
-    { name: "Custom Video Call", icon: "🎥" },
+    { name: "Video Call", icon: "📹", price: 999 },
+    { name: "Groups", icon: "👥", price: 499 },
+    { name: "MeetUP", icon: "🤝", price: 1499 },
+    { name: "Custom Video Call", icon: "🎥", price: 1999 },
   ];
+
+  const handleButtonClick = (planName, price) => {
+    navigate('/payment', { state: { planName, price } });
+  };
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -52,6 +59,7 @@ const Index = () => {
             <Button
               key={index}
               className="w-full text-lg py-6 bg-transparent text-white rounded-full border border-gold-shimmer transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-gold-flare"
+              onClick={() => handleButtonClick(button.name, button.price)}
             >
               <span className="mr-2">{button.icon}</span>
               {button.name}
