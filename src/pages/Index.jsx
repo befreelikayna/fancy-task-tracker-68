@@ -1,11 +1,19 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Button } from "@/components/ui/button";
 import LiveBackground from '../components/LiveBackground';
 
 const Index = () => {
   useEffect(() => {
     document.title = "Ankita Sharma's Dashboard";
   }, []);
+
+  const buttons = [
+    { name: "Video Call", icon: "📹" },
+    { name: "Groups", icon: "👥" },
+    { name: "MeetUP", icon: "🤝" },
+    { name: "Custom Video Call", icon: "🎥" },
+  ];
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -19,9 +27,18 @@ const Index = () => {
         >
           Ankita Sharma
         </motion.h1>
-        {/* Content area */}
-        <div className="flex-grow flex items-center justify-center">
-          {/* Add any additional content here */}
+        
+        {/* Button container */}
+        <div className="w-full max-w-md flex flex-col items-center space-y-4">
+          {buttons.map((button, index) => (
+            <Button
+              key={index}
+              className="w-full text-lg py-6 bg-white bg-opacity-20 hover:bg-opacity-30 backdrop-blur-md rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+            >
+              <span className="mr-2">{button.icon}</span>
+              {button.name}
+            </Button>
+          ))}
         </div>
       </div>
     </div>
