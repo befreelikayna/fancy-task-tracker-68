@@ -97,67 +97,44 @@ const VideoCallModal = ({ isOpen, onClose }) => {
       case 4:
         return (
           <div className="space-y-4">
-            <Button onClick={() => setStep(4.5)}>Select Model</Button>
+            <p>Select Model:</p>
+            <div className="flex flex-col space-y-2">
+              <Button onClick={() => handleModelSelect('Model 1')}>Model 1</Button>
+              <Button onClick={() => handleModelSelect('Model 2')}>Model 2</Button>
+              <Button onClick={() => handleModelSelect('Model 3')}>Model 3</Button>
+            </div>
+            {selectedPlan !== 'Video Call 30 Minutes' && (
+              <p className="text-sm text-red-500">Model 3 can only be selected for video calls of 30 minutes. Please check Custom Video Call.</p>
+            )}
             {selectedModel && <p>Selected Model: {selectedModel}</p>}
           </div>
-        );
-      case 4.5:
-        return (
-          <Dialog open={true} onOpenChange={() => setStep(4)}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Select Model</DialogTitle>
-              </DialogHeader>
-              <div className="flex flex-col space-y-4">
-                <Button onClick={() => handleModelSelect('Model 1')}>Model 1</Button>
-                <Button onClick={() => handleModelSelect('Model 2')}>Model 2</Button>
-                <Button onClick={() => handleModelSelect('Model 3')}>Model 3</Button>
-                {selectedPlan !== 'Video Call 30 Minutes' && (
-                  <p className="text-sm text-red-500">Model 3 can only be selected for video calls of 30 minutes. Please check Custom Video Call.</p>
-                )}
-              </div>
-            </DialogContent>
-          </Dialog>
         );
       case 5:
         return (
           <div className="space-y-4">
-            <Button onClick={() => setStep(5.5)}>Select Date and Time</Button>
+            <DatePicker date={selectedDate} onDateChange={setSelectedDate} />
+            <Select onValueChange={setSelectedTime}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Time" />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 10 }, (_, i) => i + 17).map((hour) => (
+                  <SelectItem key={hour} value={`${hour % 12 || 12}:00 ${hour >= 12 ? 'PM' : 'AM'}`}>
+                    {`${hour % 12 || 12}:00 ${hour >= 12 ? 'PM' : 'AM'}`}
+                  </SelectItem>
+                ))}
+                {[1, 2].map((hour) => (
+                  <SelectItem key={hour} value={`${hour}:00 AM`}>
+                    {`${hour}:00 AM`}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button onClick={handleDateTimeSelect}>Check Availability</Button>
             {selectedDate && selectedTime && (
               <p>Selected Date and Time: {selectedDate.toDateString()} at {selectedTime}</p>
             )}
           </div>
-        );
-      case 5.5:
-        return (
-          <Dialog open={true} onOpenChange={() => setStep(5)}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Select Date and Time</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <DatePicker date={selectedDate} onDateChange={setSelectedDate} />
-                <Select onValueChange={setSelectedTime}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Time" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 10 }, (_, i) => i + 17).map((hour) => (
-                      <SelectItem key={hour} value={`${hour % 12 || 12}:00 ${hour >= 12 ? 'PM' : 'AM'}`}>
-                        {`${hour % 12 || 12}:00 ${hour >= 12 ? 'PM' : 'AM'}`}
-                      </SelectItem>
-                    ))}
-                    {[1, 2].map((hour) => (
-                      <SelectItem key={hour} value={`${hour}:00 AM`}>
-                        {`${hour}:00 AM`}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button onClick={handleDateTimeSelect}>Done</Button>
-              </div>
-            </DialogContent>
-          </Dialog>
         );
       case 6:
         return (
