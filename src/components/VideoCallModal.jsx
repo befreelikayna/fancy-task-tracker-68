@@ -64,7 +64,7 @@ const VideoCallModal = ({ isOpen, onClose }) => {
                 onClick={() => handleContactMethodSelect(method)}
                 className="bg-gray-800 hover:bg-gray-700 text-gray-100"
               >
-                <img src={`/${method}.png`} alt={method} className="w-8 h-8" />
+                <img src={`/${method}.png`} alt={method} className="w-8 h-8 mx-auto object-cover" />
               </Button>
             ))}
           </div>
