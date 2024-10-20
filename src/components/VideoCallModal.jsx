@@ -21,18 +21,6 @@ const VideoCallModal = ({ isOpen, onClose }) => {
 
   const handleModelSelect = (model) => {
     setSelectedModel(model);
-    setIsSelectModelOpen(false);
-    
-    // Hide all model images
-    document.querySelectorAll('[id^="model-image-"]').forEach(img => {
-      img.classList.add('hidden');
-    });
-
-    // Show the selected model's image
-    const selectedImg = document.getElementById(`model-image-${model.name.replace(' ', '-').toLowerCase()}`);
-    if (selectedImg) {
-      selectedImg.classList.remove('hidden');
-    }
   };
 
   const handleContactMethodSelect = (method) => {
@@ -56,7 +44,6 @@ const VideoCallModal = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     if (!isSelectModelOpen && selectedModel) {
-      // Hide all model images when the modal is closed
       document.querySelectorAll('[id^="model-image-"]').forEach(img => {
         img.classList.add('hidden');
       });

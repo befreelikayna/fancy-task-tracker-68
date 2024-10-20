@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
@@ -9,12 +9,25 @@ const models = [
 ];
 
 const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
+  const [selectedModel, setSelectedModel] = useState(models[0]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedModel(models[0]);
+    }
+  }, [isOpen]);
+
   const handleModelSelect = (model) => {
     if (model.name === 'Model 3' && selectedPlan !== 'Video Call 30 Minutes') {
       alert("Model 3 can only be selected for video calls of 30 minutes. Please check Custom Video Call.");
       return;
     }
-    onSelect(model);
+    setSelectedModel(model);
+  };
+
+  const handleConfirmSelection = () => {
+    onSelect(selectedModel);
+    onClose();
   };
 
   return (
@@ -29,7 +42,7 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
               <Button
                 key={model.name}
                 onClick={() => handleModelSelect(model)}
-                className="bg-gray-800 hover:bg-gray-700 text-gray-100"
+                className={`bg-gray-800 hover:bg-gray-700 text-gray-100 ${selectedModel.name === model.name ? 'ring-2 ring-blue-500' : ''}`}
               >
                 {model.name}
               </Button>
@@ -39,16 +52,18 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
             <p className="text-sm text-red-400">Note: Model 3 can only be selected for video calls of 30 minutes.</p>
           )}
           <div className="mt-4">
-            {models.map((model) => (
-              <img
-                key={model.name}
-                src={model.image}
-                alt={model.name}
-                className="w-full h-auto object-cover rounded-lg hidden"
-                id={`model-image-${model.name.replace(' ', '-').toLowerCase()}`}
-              />
-            ))}
+            <img
+              src={selectedModel.image}
+              alt={selectedModel.name}
+              className="w-full h-auto object-cover rounded-lg mx-auto"
+            />
           </div>
+          <Button
+            onClick={handleConfirmSelection}
+            className="mt-4 bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            Select
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
