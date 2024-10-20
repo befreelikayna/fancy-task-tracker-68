@@ -9,7 +9,6 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { toast } from "sonner";
 
 const VideoCallModal = ({ isOpen, onClose }) => {
-  const [step, setStep] = useState(1);
   const [contactMethod, setContactMethod] = useState('');
   const [username, setUsername] = useState('');
   const [selectedPlan, setSelectedPlan] = useState('');
@@ -20,12 +19,10 @@ const VideoCallModal = ({ isOpen, onClose }) => {
 
   const handleContactMethodSelect = (method) => {
     setContactMethod(method);
-    setStep(2);
   };
 
   const handlePlanSelect = (plan) => {
     setSelectedPlan(plan);
-    setStep(4);
   };
 
   const handleModelSelect = (model) => {
@@ -34,13 +31,11 @@ const VideoCallModal = ({ isOpen, onClose }) => {
       return;
     }
     setSelectedModel(model);
-    setStep(5);
   };
 
   const handleDateTimeSelect = () => {
     if (selectedDate && selectedTime) {
       toast.success("Slot is available");
-      setStep(6);
     } else {
       toast.error("Please select both date and time");
     }
@@ -55,50 +50,44 @@ const VideoCallModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <div className="flex justify-center space-x-4">
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Video Call Booking</DialogTitle>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-3 gap-4">
             {['Instagram', 'Telegram', 'Whatsapp'].map((method) => (
               <Button key={method} onClick={() => handleContactMethodSelect(method)}>
                 <img src={`/${method}.png`} alt={method} className="w-8 h-8" />
               </Button>
             ))}
           </div>
-        );
-      case 2:
-        return (
-          <div className="space-y-4">
+          
+          {contactMethod && (
             <Input
               placeholder={`Enter ${contactMethod} ${contactMethod === 'Whatsapp' ? 'Number' : 'Username'}`}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
-            <Button onClick={() => setStep(3)}>Next</Button>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-4">
-            <Select onValueChange={handlePlanSelect}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Plan" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Video Call 10 Minutes">Video Call 10 Minutes</SelectItem>
-                <SelectItem value="Video Call 15 Minutes">Video Call 15 Minutes</SelectItem>
-                <SelectItem value="Video Call 30 Minutes">Video Call 30 Minutes</SelectItem>
-              </SelectContent>
-            </Select>
-            {selectedPlan && <p>Selected Plan: {selectedPlan}</p>}
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-4">
+          )}
+          
+          <Select onValueChange={handlePlanSelect}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select Plan" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Video Call 10 Minutes">Video Call 10 Minutes</SelectItem>
+              <SelectItem value="Video Call 15 Minutes">Video Call 15 Minutes</SelectItem>
+              <SelectItem value="Video Call 30 Minutes">Video Call 30 Minutes</SelectItem>
+            </SelectContent>
+          </Select>
+          {selectedPlan && <p>Selected Plan: {selectedPlan}</p>}
+          
+          <div className="space-y-2">
             <p>Select Model:</p>
-            <div className="flex flex-col space-y-2">
+            <div className="flex space-x-2">
               <Button onClick={() => handleModelSelect('Model 1')}>Model 1</Button>
               <Button onClick={() => handleModelSelect('Model 2')}>Model 2</Button>
               <Button onClick={() => handleModelSelect('Model 3')}>Model 3</Button>
@@ -108,10 +97,8 @@ const VideoCallModal = ({ isOpen, onClose }) => {
             )}
             {selectedModel && <p>Selected Model: {selectedModel}</p>}
           </div>
-        );
-      case 5:
-        return (
-          <div className="space-y-4">
+          
+          <div className="space-y-2">
             <DatePicker date={selectedDate} onDateChange={setSelectedDate} />
             <Select onValueChange={setSelectedTime}>
               <SelectTrigger>
@@ -131,44 +118,27 @@ const VideoCallModal = ({ isOpen, onClose }) => {
               </SelectContent>
             </Select>
             <Button onClick={handleDateTimeSelect}>Check Availability</Button>
-            {selectedDate && selectedTime && (
-              <p>Selected Date and Time: {selectedDate.toDateString()} at {selectedTime}</p>
-            )}
           </div>
-        );
-      case 6:
-        return (
-          <div className="space-y-4">
-            <RadioGroup onValueChange={setMeetingPlatform}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="Google Meet" id="google-meet" />
-                <Label htmlFor="google-meet">Google Meet</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="Telegram" id="telegram" />
-                <Label htmlFor="telegram">Telegram</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="Instagram" id="instagram" />
-                <Label htmlFor="instagram">Instagram</Label>
-              </div>
-            </RadioGroup>
-            {selectedPlan && <p>Price: {getPriceForPlan()}</p>}
-            <Button onClick={onClose}>Confirm</Button>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Video Call Booking</DialogTitle>
-        </DialogHeader>
-        {renderStep()}
+          
+          <RadioGroup onValueChange={setMeetingPlatform}>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Google Meet" id="google-meet" />
+              <Label htmlFor="google-meet">Google Meet</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Telegram" id="telegram" />
+              <Label htmlFor="telegram">Telegram</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Instagram" id="instagram" />
+              <Label htmlFor="instagram">Instagram</Label>
+            </div>
+          </RadioGroup>
+          
+          {selectedPlan && <p>Price: {getPriceForPlan()}</p>}
+          
+          <Button onClick={onClose}>Confirm</Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
