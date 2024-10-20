@@ -19,14 +19,21 @@ const Index = () => {
     <div className="relative min-h-screen overflow-hidden">
       <LiveBackground />
       <div className="relative z-10 flex flex-col items-center justify-start min-h-screen text-white p-4">
-        <motion.h1
+        <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="text-4xl sm:text-6xl font-bold mt-8 mb-16 shadow-text text-center"
+          className="flex flex-col items-center"
         >
-          Ankita Sharma
-        </motion.h1>
+          <img 
+            src="/Ankita.jpeg" 
+            alt="Ankita Sharma" 
+            className="w-32 h-32 rounded-full object-cover mb-4"
+          />
+          <h1 className="text-4xl sm:text-6xl font-bold mb-16 shadow-text text-center">
+            Ankita Sharma
+          </h1>
+        </motion.div>
         
         {/* Button container */}
         <div className="w-full max-w-md flex flex-col items-center space-y-4">
