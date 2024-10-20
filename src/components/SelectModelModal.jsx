@@ -23,20 +23,32 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-gray-100">Select Model</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-6 py-4">
-          {models.map((model) => (
-            <Button
-              key={model.name}
-              onClick={() => handleModelSelect(model)}
-              className="bg-gray-800 hover:bg-gray-700 text-gray-100 flex items-center space-x-4"
-            >
-              <img src={model.image} alt={model.name} className="w-12 h-12 rounded-full mx-auto object-cover" />
-              <span>{model.name}</span>
-            </Button>
-          ))}
+        <div className="flex flex-col gap-6 py-4">
+          <div className="grid grid-cols-3 gap-4">
+            {models.map((model) => (
+              <Button
+                key={model.name}
+                onClick={() => handleModelSelect(model)}
+                className="bg-gray-800 hover:bg-gray-700 text-gray-100"
+              >
+                {model.name}
+              </Button>
+            ))}
+          </div>
           {selectedPlan !== 'Video Call 30 Minutes' && (
             <p className="text-sm text-red-400">Note: Model 3 can only be selected for video calls of 30 minutes.</p>
           )}
+          <div className="mt-4">
+            {models.map((model) => (
+              <img
+                key={model.name}
+                src={model.image}
+                alt={model.name}
+                className="w-full h-auto object-cover rounded-lg hidden"
+                id={`model-image-${model.name.replace(' ', '-').toLowerCase()}`}
+              />
+            ))}
+          </div>
         </div>
       </DialogContent>
     </Dialog>

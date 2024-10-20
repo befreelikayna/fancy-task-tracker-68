@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -18,6 +18,22 @@ const VideoCallModal = ({ isOpen, onClose }) => {
   const [selectedTime, setSelectedTime] = useState('');
   const [meetingPlatform, setMeetingPlatform] = useState('');
   const [isSelectModelOpen, setIsSelectModelOpen] = useState(false);
+
+  const handleModelSelect = (model) => {
+    setSelectedModel(model);
+    setIsSelectModelOpen(false);
+    
+    // Hide all model images
+    document.querySelectorAll('[id^="model-image-"]').forEach(img => {
+      img.classList.add('hidden');
+    });
+
+    // Show the selected model's image
+    const selectedImg = document.getElementById(`model-image-${model.name.replace(' ', '-').toLowerCase()}`);
+    if (selectedImg) {
+      selectedImg.classList.remove('hidden');
+    }
+  };
 
   const handleContactMethodSelect = (method) => {
     setContactMethod(method);
@@ -42,6 +58,15 @@ const VideoCallModal = ({ isOpen, onClose }) => {
       toast.error("Please select both date and time");
     }
   };
+
+  useEffect(() => {
+    if (!isSelectModelOpen && selectedModel) {
+      // Hide all model images when the modal is closed
+      document.querySelectorAll('[id^="model-image-"]').forEach(img => {
+        img.classList.add('hidden');
+      });
+    }
+  }, [isSelectModelOpen, selectedModel]);
 
   const getPriceForPlan = () => {
     switch (selectedPlan) {
