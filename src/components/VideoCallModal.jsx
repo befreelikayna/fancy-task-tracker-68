@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { DatePicker } from "@/components/ui/date-picker";
 import { toast } from "sonner";
 import SelectModelModal from './SelectModelModal';
+import PaymentModal from './PaymentModal';
 
 const VideoCallModal = ({ isOpen, onClose }) => {
   const [contactMethod, setContactMethod] = useState('');
@@ -17,6 +18,7 @@ const VideoCallModal = ({ isOpen, onClose }) => {
   const [selectedTime, setSelectedTime] = useState('');
   const [meetingPlatform, setMeetingPlatform] = useState('');
   const [isSelectModelOpen, setIsSelectModelOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   const handleModelSelect = (model) => {
     setSelectedModel(model);
@@ -51,10 +53,18 @@ const VideoCallModal = ({ isOpen, onClose }) => {
 
   const getPriceForPlan = () => {
     switch (selectedPlan) {
-      case 'Video Call 10 Minutes': return '₹299';
-      case 'Video Call 15 Minutes': return '₹539';
-      case 'Video Call 30 Minutes': return '₹999';
-      default: return '';
+      case 'Video Call 10 Minutes': return 299;
+      case 'Video Call 15 Minutes': return 539;
+      case 'Video Call 30 Minutes': return 999;
+      default: return 0;
+    }
+  };
+
+  const handleConfirm = () => {
+    if (!meetingPlatform) {
+      toast.error("Please select a meeting platform");
+    } else {
+      setIsPaymentModalOpen(true);
     }
   };
 
@@ -160,17 +170,10 @@ const VideoCallModal = ({ isOpen, onClose }) => {
               </div>
             </div>
             
-            {selectedPlan && <p className="text-gray-300">Price: {getPriceForPlan()}</p>}
+            {selectedPlan && <p className="text-gray-300">Price: ₹{getPriceForPlan()}</p>}
             
             <Button 
-              onClick={() => {
-                if (!meetingPlatform) {
-                  toast.error("Please select a meeting platform");
-                } else {
-                  onClose();
-                  toast.success("Booking confirmed!");
-                }
-              }}
+              onClick={handleConfirm}
               className="bg-green-600 hover:bg-green-700 text-white"
             >
               Confirm
@@ -183,6 +186,17 @@ const VideoCallModal = ({ isOpen, onClose }) => {
         onClose={() => setIsSelectModelOpen(false)} 
         onSelect={handleModelSelect}
         selectedPlan={selectedPlan}
+      />
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        planName={selectedPlan}
+        price={getPriceForPlan()}
+        additionalDetails={{
+          "Plan Type": "Video Call",
+          "Model Selected": selectedModel ? selectedModel.name : "Not selected",
+          "Meeting Platform": meetingPlatform
+        }}
       />
     </>
   );
