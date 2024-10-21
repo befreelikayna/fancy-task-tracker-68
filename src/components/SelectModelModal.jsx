@@ -18,10 +18,6 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
   }, [isOpen]);
 
   const handleModelSelect = (model) => {
-    if (model.name === 'Model 3' && selectedPlan !== 'Video Call 30 Minutes') {
-      alert("Model 3 can only be selected for video calls of 30 minutes. Please check Custom Video Call.");
-      return;
-    }
     setSelectedModel(model);
   };
 
@@ -29,6 +25,8 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
     onSelect(selectedModel);
     onClose();
   };
+
+  const isModel3Disabled = selectedModel.name === 'Model 3' && selectedPlan !== 'Video Call 30 Minutes';
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -48,8 +46,8 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
               </Button>
             ))}
           </div>
-          {selectedPlan !== 'Video Call 30 Minutes' && (
-            <p className="text-sm text-red-400">Note: Model 3 can only be selected for video calls of 30 minutes.</p>
+          {isModel3Disabled && (
+            <p className="text-sm text-red-400">Note: Model 3 can only be selected for video calls of 30 minutes or more.</p>
           )}
           <div className="mt-4">
             <img
@@ -60,7 +58,8 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
           </div>
           <Button
             onClick={handleConfirmSelection}
-            className="mt-4 bg-blue-600 hover:bg-blue-700 text-white"
+            className="mt-4 bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isModel3Disabled}
           >
             Select
           </Button>
