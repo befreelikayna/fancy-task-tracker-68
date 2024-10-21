@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { DatePicker } from "@/components/ui/date-picker";
 import { toast } from "sonner";
@@ -147,19 +146,18 @@ const VideoCallModal = ({ isOpen, onClose }) => {
             </div>
             
             <div className="space-y-2">
-              <Label className="text-gray-300">Select Meeting Platform (Required)</Label>
-              <RadioGroup 
-                onValueChange={setMeetingPlatform} 
-                className="flex justify-between"
-                value={meetingPlatform}
-              >
+              <Label className="text-gray-300">Select Meeting Platform *</Label>
+              <div className="flex justify-between gap-2">
                 {['Google Meet', 'Telegram', 'Instagram'].map((platform) => (
-                  <div key={platform} className="flex items-center space-x-2">
-                    <RadioGroupItem value={platform} id={platform.toLowerCase()} className="border-gray-600" />
-                    <Label htmlFor={platform.toLowerCase()} className="text-gray-300">{platform}</Label>
-                  </div>
+                  <Button
+                    key={platform}
+                    onClick={() => setMeetingPlatform(platform)}
+                    className={`flex-1 ${meetingPlatform === platform ? 'bg-blue-600' : 'bg-gray-700'} hover:bg-blue-700 text-white`}
+                  >
+                    {platform}
+                  </Button>
                 ))}
-              </RadioGroup>
+              </div>
             </div>
             
             {selectedPlan && <p className="text-gray-300">Price: {getPriceForPlan()}</p>}
