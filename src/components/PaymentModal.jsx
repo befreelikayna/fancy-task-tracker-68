@@ -10,15 +10,15 @@ import {
 const PaymentModal = ({ isOpen, onClose, planName, price, additionalDetails = {} }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-gray-900 text-gray-100 border-gray-700">
         <DialogHeader>
-          <DialogTitle>{planName}</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-gray-100">{planName}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col items-center justify-center p-4">
-          <p className="text-xl text-center mb-4">Price: ₹{price}</p>
+          <p className="text-xl text-center mb-4 text-gray-300">Price: ₹{price}</p>
           
           {Object.entries(additionalDetails).map(([key, value]) => (
-            <p key={key} className="text-sm mb-2">
+            <p key={key} className="text-sm mb-2 text-gray-300">
               <span className="font-semibold">{key}:</span> {value}
             </p>
           ))}
@@ -28,14 +28,14 @@ const PaymentModal = ({ isOpen, onClose, planName, price, additionalDetails = {}
           </div>
           
           <Button 
-            className="w-full mb-4"
+            className="w-full mb-4 bg-gray-800 hover:bg-gray-700 text-gray-100"
             variant="outline"
             onClick={() => navigator.clipboard.writeText("npshorts23@oksbi")}
           >
             UPI ID: npshorts23@oksbi
           </Button>
           
-          <Button className="w-full">
+          <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
             Proceed
           </Button>
         </div>
