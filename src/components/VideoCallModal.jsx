@@ -146,19 +146,33 @@ const VideoCallModal = ({ isOpen, onClose }) => {
               </Button>
             </div>
             
-            <RadioGroup onValueChange={setMeetingPlatform}>
-              {['Google Meet', 'Telegram', 'Instagram'].map((platform) => (
-                <div key={platform} className="flex items-center space-x-2">
-                  <RadioGroupItem value={platform} id={platform.toLowerCase()} className="border-gray-600" />
-                  <Label htmlFor={platform.toLowerCase()} className="text-gray-300">{platform}</Label>
-                </div>
-              ))}
-            </RadioGroup>
+            <div className="space-y-2">
+              <Label className="text-gray-300">Select Meeting Platform (Required)</Label>
+              <RadioGroup 
+                onValueChange={setMeetingPlatform} 
+                className="flex justify-between"
+                value={meetingPlatform}
+              >
+                {['Google Meet', 'Telegram', 'Instagram'].map((platform) => (
+                  <div key={platform} className="flex items-center space-x-2">
+                    <RadioGroupItem value={platform} id={platform.toLowerCase()} className="border-gray-600" />
+                    <Label htmlFor={platform.toLowerCase()} className="text-gray-300">{platform}</Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
             
             {selectedPlan && <p className="text-gray-300">Price: {getPriceForPlan()}</p>}
             
             <Button 
-              onClick={onClose}
+              onClick={() => {
+                if (!meetingPlatform) {
+                  toast.error("Please select a meeting platform");
+                } else {
+                  onClose();
+                  toast.success("Booking confirmed!");
+                }
+              }}
               className="bg-green-600 hover:bg-green-700 text-white"
             >
               Confirm
