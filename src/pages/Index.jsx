@@ -29,7 +29,7 @@ const Index = () => {
           className="flex flex-col items-center"
         >
           <img 
-            src="/Ankita.jpeg" 
+            src="/placeholder.svg" 
             alt="Ankita Sharma" 
             className="w-32 h-32 rounded-full object-cover mb-4"
           />
