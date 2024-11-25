@@ -77,12 +77,6 @@ const GroupModal = ({ isOpen, onClose }) => {
 
           {step === 1 ? (
             <div className="flex flex-col gap-4">
-              <Button
-                onClick={() => window.open('https://t.me/demo_group', '_blank')}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg transform transition-all duration-200 hover:scale-105 animate-pulse shadow-lg"
-              >
-                Join Demo Group
-              </Button>
               {Object.keys(groupPricing).map((group) => (
                 <Button
                   key={group}
@@ -95,6 +89,13 @@ const GroupModal = ({ isOpen, onClose }) => {
             </div>
           ) : (
             <div className="grid gap-6 py-4">
+              <Button
+                onClick={() => window.open('https://t.me/demo_group', '_blank')}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg transform transition-all duration-200 hover:scale-105 animate-pulse shadow-lg"
+              >
+                Join Demo Group
+              </Button>
+
               <Input
                 placeholder="Enter your name"
                 value={username}
