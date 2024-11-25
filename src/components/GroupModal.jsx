@@ -77,6 +77,12 @@ const GroupModal = ({ isOpen, onClose }) => {
 
           {step === 1 ? (
             <div className="flex flex-col gap-4">
+              <Button
+                onClick={() => window.open('https://t.me/demo_group', '_blank')}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg transform transition-all duration-200 hover:scale-105 animate-pulse shadow-lg"
+              >
+                Join Demo Group
+              </Button>
               {Object.keys(groupPricing).map((group) => (
                 <Button
                   key={group}
@@ -96,18 +102,23 @@ const GroupModal = ({ isOpen, onClose }) => {
                 className="bg-gray-800 text-gray-100 border-gray-700"
               />
 
-              <div className="grid grid-cols-3 gap-4">
-                {['Instagram', 'Telegram', 'Whatsapp'].map((method) => (
-                  <Button 
-                    key={method} 
-                    onClick={() => setContactMethod(method)}
-                    className={`bg-gray-800 hover:bg-gray-700 text-gray-100 ${
-                      contactMethod === method ? 'ring-2 ring-blue-500' : ''
-                    }`}
-                  >
-                    <img src={`/${method}.png`} alt={method} className="w-8 h-8 mx-auto object-cover" />
-                  </Button>
-                ))}
+              <div className="space-y-4">
+                <p className="text-gray-300 text-sm">
+                  Select the platform where you'll like to receive the joining link.
+                </p>
+                <div className="grid grid-cols-3 gap-4">
+                  {['Instagram', 'Telegram', 'Whatsapp'].map((method) => (
+                    <Button 
+                      key={method} 
+                      onClick={() => setContactMethod(method)}
+                      className={`bg-gray-800 hover:bg-gray-700 text-gray-100 ${
+                        contactMethod === method ? 'ring-2 ring-blue-500' : ''
+                      }`}
+                    >
+                      <img src={`/${method}.png`} alt={method} className="w-8 h-8 mx-auto object-cover" />
+                    </Button>
+                  ))}
+                </div>
               </div>
 
               {contactMethod && (
