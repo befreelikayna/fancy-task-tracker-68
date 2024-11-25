@@ -3,17 +3,19 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import LiveBackground from '../components/LiveBackground';
 import VideoCallModal from '../components/VideoCallModal';
+import GroupModal from '../components/GroupModal';
 
 const Index = () => {
   const [isVideoCallModalOpen, setIsVideoCallModalOpen] = useState(false);
+  const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
   useEffect(() => {
     document.title = "Ankita Sharma's Dashboard";
   }, []);
 
   const buttons = [
-    { name: "Video Call", icon: "📹", price: 999 },
-    { name: "Groups", icon: "👥", price: 499 },
+    { name: "Video Call", icon: "📹", price: 999, onClick: () => setIsVideoCallModalOpen(true) },
+    { name: "Groups", icon: "👥", price: 499, onClick: () => setIsGroupModalOpen(true) },
     { name: "MeetUP", icon: "🤝", price: 1499 },
     { name: "Custom Video Call", icon: "🎥", price: 1999 },
   ];
@@ -53,7 +55,7 @@ const Index = () => {
             <Button
               key={index}
               className="w-full text-lg py-6 bg-transparent text-white rounded-full border border-gold-shimmer transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-gold-flare"
-              onClick={() => button.name === "Video Call" && setIsVideoCallModalOpen(true)}
+              onClick={button.onClick}
             >
               <span className="mr-2">{button.icon}</span>
               {button.name}
@@ -62,6 +64,7 @@ const Index = () => {
         </div>
       </div>
       <VideoCallModal isOpen={isVideoCallModalOpen} onClose={() => setIsVideoCallModalOpen(false)} />
+      <GroupModal isOpen={isGroupModalOpen} onClose={() => setIsGroupModalOpen(false)} />
     </div>
   );
 };
