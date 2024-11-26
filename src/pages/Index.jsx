@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import LiveBackground from '../components/LiveBackground';
 import VideoCallModal from '../components/VideoCallModal';
 import GroupModal from '../components/GroupModal';
+import ComingSoonModal from '../components/ComingSoonModal';
 
 const Index = () => {
   const [isVideoCallModalOpen, setIsVideoCallModalOpen] = useState(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+  const [isComingSoonModalOpen, setIsComingSoonModalOpen] = useState(false);
 
   useEffect(() => {
     document.title = "Ankita Sharma's Dashboard";
@@ -16,8 +18,8 @@ const Index = () => {
   const buttons = [
     { name: "Video Call", icon: "📹", price: 999, onClick: () => setIsVideoCallModalOpen(true) },
     { name: "Groups", icon: "👥", price: 499, onClick: () => setIsGroupModalOpen(true) },
-    { name: "MeetUP", icon: "🤝", price: 1499 },
-    { name: "Custom Video Call", icon: "🎥", price: 1999 },
+    { name: "MeetUP", icon: "🤝", price: 1499, onClick: () => setIsComingSoonModalOpen(true) },
+    { name: "Custom Video Call", icon: "🎥", price: 1999, onClick: () => setIsComingSoonModalOpen(true) },
   ];
 
   return (
@@ -65,6 +67,7 @@ const Index = () => {
       </div>
       <VideoCallModal isOpen={isVideoCallModalOpen} onClose={() => setIsVideoCallModalOpen(false)} />
       <GroupModal isOpen={isGroupModalOpen} onClose={() => setIsGroupModalOpen(false)} />
+      <ComingSoonModal isOpen={isComingSoonModalOpen} onClose={() => setIsComingSoonModalOpen(false)} />
     </div>
   );
 };
