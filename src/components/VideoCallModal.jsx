@@ -26,6 +26,17 @@ const VideoCallModal = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    // Reset selected model if Exclusive Model is selected and plan duration changes
+    if (
+      state.selectedModel?.isExclusive &&
+      state.selectedPlan !== 'Video Call 30 Minutes'
+    ) {
+      setState(prev => ({ ...prev, selectedModel: null }));
+      toast.warning("Exclusive Model is only available for 30-minute calls. Please select another model.");
+    }
+  }, [state.selectedPlan]);
+
   const handleModelSelect = (model) => {
     setState(prevState => ({ ...prevState, selectedModel: model }));
   };
@@ -90,7 +101,9 @@ const VideoCallModal = ({ isOpen, onClose }) => {
         price={getPriceForPlan()}
         additionalDetails={{
           "Plan Type": "Video Call",
-          "Model Selected": state.selectedModel ? state.selectedModel.name : "Not selected",
+          "Model Selected": state.selectedModel ? 
+            (state.selectedModel.isExclusive ? "Exclusive Model" : state.selectedModel.name) 
+            : "Not selected",
           "Meeting Platform": state.meetingPlatform
         }}
       />

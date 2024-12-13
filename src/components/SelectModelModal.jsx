@@ -1,24 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const models = [
   { name: 'Model 1', image: '/Model1.jpeg' },
   { name: 'Model 2', image: '/Model2.jpeg' },
   { name: 'Model 3', image: '/Model3.jpeg' },
+  { name: 'Model 4', image: '/Model4.jpeg' },
+  { name: 'Model 5', image: '/Model5.jpeg' },
+  { 
+    name: 'Exclusive Model', 
+    images: [
+      '/Exclusive.jpeg',
+      '/Exclusive1.jpeg',
+      '/Exclusive2.jpeg',
+      '/Exclusive3.jpeg'
+    ],
+    isExclusive: true
+  }
 ];
 
 const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
   const [selectedModel, setSelectedModel] = useState(models[0]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     if (isOpen) {
       setSelectedModel(models[0]);
+      setCurrentImageIndex(0);
     }
   }, [isOpen]);
 
   const handleModelSelect = (model) => {
     setSelectedModel(model);
+    setCurrentImageIndex(0);
   };
 
   const handleConfirmSelection = () => {
@@ -26,7 +42,49 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
     onClose();
   };
 
-  const isModel3Disabled = selectedModel.name === 'Model 3' && selectedPlan !== 'Video Call 30 Minutes';
+  const isExclusiveDisabled = selectedModel.isExclusive && selectedPlan !== 'Video Call 30 Minutes';
+
+  const ModelImage = ({ model }) => {
+    if (model.isExclusive) {
+      return (
+        <div className="relative">
+          <Carousel className="w-full">
+            <CarouselContent>
+              {model.images.map((image, index) => (
+                <CarouselItem key={index}>
+                  <img
+                    src={image}
+                    alt={`${model.name} ${index + 1}`}
+                    className="w-full h-64 object-cover rounded-lg"
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+          <div className="flex justify-center mt-2 space-x-2">
+            {model.images.map((_, index) => (
+              <div
+                key={index}
+                className={`h-2 w-2 rounded-full ${
+                  currentImageIndex === index ? 'bg-blue-500' : 'bg-gray-400'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <img
+        src={model.image}
+        alt={model.name}
+        className="w-full h-64 object-cover rounded-lg"
+      />
+    );
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -40,26 +98,29 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
               <Button
                 key={model.name}
                 onClick={() => handleModelSelect(model)}
-                className={`bg-gray-800 hover:bg-gray-700 text-gray-100 ${selectedModel.name === model.name ? 'ring-2 ring-blue-500' : ''}`}
+                className={`bg-gray-800 hover:bg-gray-700 text-gray-100 ${
+                  selectedModel.name === model.name ? 'ring-2 ring-blue-500' : ''
+                }`}
               >
                 {model.name}
               </Button>
             ))}
           </div>
-          {isModel3Disabled && (
-            <p className="text-sm text-red-400">Note: Model 3 can only be selected for video calls of 30 minutes or more.</p>
+          
+          {isExclusiveDisabled && (
+            <p className="text-sm text-red-400">
+              Note: Exclusive Model can only be selected for video calls of 30 minutes or more.
+            </p>
           )}
+          
           <div className="mt-4">
-            <img
-              src={selectedModel.image}
-              alt={selectedModel.name}
-              className="w-full h-auto object-cover rounded-lg mx-auto"
-            />
+            <ModelImage model={selectedModel} />
           </div>
+          
           <Button
             onClick={handleConfirmSelection}
             className="mt-4 bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={isModel3Disabled}
+            disabled={isExclusiveDisabled}
           >
             Select
           </Button>
