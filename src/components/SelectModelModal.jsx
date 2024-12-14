@@ -52,11 +52,13 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
             <CarouselContent>
               {model.images.map((image, index) => (
                 <CarouselItem key={index}>
-                  <img
-                    src={image}
-                    alt={`${model.name} ${index + 1}`}
-                    className="w-full h-64 object-cover rounded-lg"
-                  />
+                  <div className="flex justify-center">
+                    <img
+                      src={image}
+                      alt={`${model.name} ${index + 1}`}
+                      className="max-h-[80vh] w-auto object-contain rounded-lg"
+                    />
+                  </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -78,11 +80,13 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
     }
 
     return (
-      <img
-        src={model.image}
-        alt={model.name}
-        className="w-full h-64 object-cover rounded-lg"
-      />
+      <div className="flex justify-center">
+        <img
+          src={model.image}
+          alt={model.name}
+          className="max-h-[80vh] w-auto object-contain rounded-lg"
+        />
+      </div>
     );
   };
 
