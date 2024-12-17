@@ -66,10 +66,13 @@ const VideoCallForm = ({
       )}
       
       <div className="space-y-4">
-        <Select onValueChange={(value) => {
-          setSelectedPlan(value);
-          setCustomDuration(value === 'custom' ? '10' : '');
-        }}>
+        <Select 
+          value={selectedPlan} 
+          onValueChange={(value) => {
+            setSelectedPlan(value);
+            setCustomDuration(value === 'custom' ? '10' : '');
+          }}
+        >
           <SelectTrigger className="bg-gray-800 text-gray-100 border-gray-700">
             <SelectValue placeholder="Select Plan" />
           </SelectTrigger>
