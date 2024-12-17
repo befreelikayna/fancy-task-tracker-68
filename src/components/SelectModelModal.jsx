@@ -42,7 +42,13 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
     onClose();
   };
 
-  const isExclusiveDisabled = selectedModel.isExclusive && selectedPlan !== 'Video Call 30 Minutes';
+  const isExclusiveDisabled = () => {
+    if (!selectedModel.isExclusive) return false;
+    if (!selectedPlan) return true;
+    
+    const duration = parseInt(selectedPlan.match(/\d+/)?.[0] || '0');
+    return duration < 30;
+  };
 
   const ModelImage = ({ model }) => {
     if (model.isExclusive) {
@@ -111,7 +117,7 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
             ))}
           </div>
           
-          {isExclusiveDisabled && (
+          {isExclusiveDisabled() && (
             <p className="text-sm text-red-400">
               Note: Exclusive Model can only be selected for video calls of 30 minutes or more.
             </p>
@@ -124,7 +130,7 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
           <Button
             onClick={handleConfirmSelection}
             className="mt-4 bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={isExclusiveDisabled}
+            disabled={isExclusiveDisabled()}
           >
             Select
           </Button>

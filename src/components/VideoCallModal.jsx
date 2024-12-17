@@ -27,12 +27,13 @@ const VideoCallModal = ({ isOpen, onClose }) => {
   }, [isOpen]);
 
   useEffect(() => {
-    if (
-      state.selectedModel?.isExclusive &&
-      !state.selectedPlan.includes('30')
-    ) {
-      setState(prev => ({ ...prev, selectedModel: null }));
-      toast.warning("Exclusive Model is only available for 30-minute or longer calls. Please select another model.");
+    // Check if the selected model is exclusive and the duration is less than 30 minutes
+    if (state.selectedModel?.isExclusive) {
+      const duration = state.selectedPlan ? parseInt(state.selectedPlan.match(/\d+/)?.[0] || '0') : 0;
+      if (duration < 30) {
+        setState(prev => ({ ...prev, selectedModel: null }));
+        toast.warning("Exclusive Model is only available for 30-minute or longer calls. Please select another model.");
+      }
     }
   }, [state.selectedPlan]);
 
@@ -58,7 +59,8 @@ const VideoCallModal = ({ isOpen, onClose }) => {
     
     if (duration <= 10) return 299;
     if (duration <= 15) return 549;
-    if (duration <= 30) {
+    if (duration === 30) return 999;
+    if (duration < 30) {
       const additionalBlocks = Math.floor((duration - 15) / 5);
       return 549 + (additionalBlocks * 90);
     }
