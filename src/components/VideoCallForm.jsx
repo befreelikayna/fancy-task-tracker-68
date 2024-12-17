@@ -30,13 +30,17 @@ const VideoCallForm = ({
   const handleCustomDurationChange = (e) => {
     const value = e.target.value;
     if (value === '' || /^\d+$/.test(value)) {
-      const duration = parseInt(value || '0');
-      if (duration % 5 === 0 && duration >= 10) {
-        setCustomDuration(value);
+      setCustomDuration(value);
+      
+      if (value === '') {
+        setSelectedPlan('');
+        return;
+      }
+
+      const duration = parseInt(value);
+      if (duration >= 10 && duration % 5 === 0) {
         setSelectedPlan(`Video Call ${duration} Minutes`);
-      } else if (value === '') {
-        setCustomDuration('');
-      } else {
+      } else if (duration !== 0) {
         toast.error("Duration must be in multiples of 5 minutes and minimum 10 minutes");
       }
     }
