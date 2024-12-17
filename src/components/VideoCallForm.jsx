@@ -91,7 +91,7 @@ const VideoCallForm = ({
           </SelectContent>
         </Select>
 
-        {selectedPlan === 'custom' && (
+        {(selectedPlan === 'custom' || selectedPlan.includes('Custom Duration')) && (
           <div className="space-y-2">
             <Label className="text-gray-300">Enter Duration (minutes)</Label>
             <Input
