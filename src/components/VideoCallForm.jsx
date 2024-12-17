@@ -25,7 +25,7 @@ const VideoCallForm = ({
   getPriceForPlan,
   handleConfirm
 }) => {
-  const [customDuration, setCustomDuration] = useState('10');
+  const [customDuration, setCustomDuration] = useState('');
 
   const handleCustomDurationChange = (e) => {
     const value = e.target.value;
@@ -46,12 +46,6 @@ const VideoCallForm = ({
       }
     }
   };
-
-  React.useEffect(() => {
-    if (selectedPlan === 'custom') {
-      setSelectedPlan(`Video Call ${customDuration} Minutes`);
-    }
-  }, []);
 
   return (
     <div className="grid gap-6 py-4">
@@ -82,7 +76,7 @@ const VideoCallForm = ({
           onValueChange={(value) => {
             setSelectedPlan(value);
             if (value === 'custom') {
-              setCustomDuration('10');
+              setCustomDuration('');
             }
           }}
         >
@@ -97,7 +91,7 @@ const VideoCallForm = ({
           </SelectContent>
         </Select>
 
-        {(selectedPlan === 'custom' || customDuration) && (
+        {selectedPlan === 'custom' && (
           <div className="space-y-2">
             <Label className="text-gray-300">Enter Duration (minutes)</Label>
             <Input
