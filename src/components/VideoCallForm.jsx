@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -25,6 +25,23 @@ const VideoCallForm = ({
   getPriceForPlan,
   handleConfirm
 }) => {
+  const [customDuration, setCustomDuration] = useState('');
+
+  const handleCustomDurationChange = (e) => {
+    const value = e.target.value;
+    if (value === '' || /^\d+$/.test(value)) {
+      const duration = parseInt(value || '0');
+      if (duration % 5 === 0 && duration >= 10) {
+        setCustomDuration(value);
+        setSelectedPlan(`Video Call ${duration} Minutes`);
+      } else if (value === '') {
+        setCustomDuration('');
+      } else {
+        toast.error("Duration must be in multiples of 5 minutes and minimum 10 minutes");
+      }
+    }
+  };
+
   return (
     <div className="grid gap-6 py-4">
       <div className="grid grid-cols-3 gap-4">
@@ -48,17 +65,38 @@ const VideoCallForm = ({
         />
       )}
       
-      <Select onValueChange={setSelectedPlan}>
-        <SelectTrigger className="bg-gray-800 text-gray-100 border-gray-700">
-          <SelectValue placeholder="Select Plan" />
-        </SelectTrigger>
-        <SelectContent className="bg-gray-800 text-gray-100 border-gray-700">
-          <SelectItem value="Video Call 10 Minutes">Video Call 10 Minutes</SelectItem>
-          <SelectItem value="Video Call 15 Minutes">Video Call 15 Minutes</SelectItem>
-          <SelectItem value="Video Call 30 Minutes">Video Call 30 Minutes</SelectItem>
-        </SelectContent>
-      </Select>
-      {selectedPlan && <p className="text-gray-300">Selected Plan: {selectedPlan}</p>}
+      <div className="space-y-4">
+        <Select onValueChange={(value) => {
+          setSelectedPlan(value);
+          setCustomDuration(value === 'custom' ? '10' : '');
+        }}>
+          <SelectTrigger className="bg-gray-800 text-gray-100 border-gray-700">
+            <SelectValue placeholder="Select Plan" />
+          </SelectTrigger>
+          <SelectContent className="bg-gray-800 text-gray-100 border-gray-700">
+            <SelectItem value="Video Call 10 Minutes">Video Call 10 Minutes</SelectItem>
+            <SelectItem value="Video Call 15 Minutes">Video Call 15 Minutes</SelectItem>
+            <SelectItem value="Video Call 30 Minutes">Video Call 30 Minutes</SelectItem>
+            <SelectItem value="custom">Custom Duration</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {selectedPlan === 'custom' && (
+          <div className="space-y-2">
+            <Label className="text-gray-300">Enter Duration (minutes)</Label>
+            <Input
+              type="number"
+              min="10"
+              step="5"
+              value={customDuration}
+              onChange={handleCustomDurationChange}
+              placeholder="Enter duration in minutes"
+              className="bg-gray-800 text-gray-100 border-gray-700"
+            />
+            <p className="text-sm text-gray-400">Duration must be in multiples of 5 minutes (minimum 10 minutes)</p>
+          </div>
+        )}
+      </div>
       
       <div className="space-y-2">
         <Button 

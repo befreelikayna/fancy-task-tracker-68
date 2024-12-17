@@ -27,13 +27,12 @@ const VideoCallModal = ({ isOpen, onClose }) => {
   }, [isOpen]);
 
   useEffect(() => {
-    // Reset selected model if Exclusive Model is selected and plan duration changes
     if (
       state.selectedModel?.isExclusive &&
-      state.selectedPlan !== 'Video Call 30 Minutes'
+      !state.selectedPlan.includes('30')
     ) {
       setState(prev => ({ ...prev, selectedModel: null }));
-      toast.warning("Exclusive Model is only available for 30-minute calls. Please select another model.");
+      toast.warning("Exclusive Model is only available for 30-minute or longer calls. Please select another model.");
     }
   }, [state.selectedPlan]);
 
@@ -50,12 +49,17 @@ const VideoCallModal = ({ isOpen, onClose }) => {
   };
 
   const getPriceForPlan = () => {
-    switch (state.selectedPlan) {
-      case 'Video Call 10 Minutes': return 299;
-      case 'Video Call 15 Minutes': return 539;
-      case 'Video Call 30 Minutes': return 999;
-      default: return 0;
+    const duration = parseInt(state.selectedPlan.match(/\d+/)[0]);
+    
+    if (duration <= 10) return 299;
+    if (duration <= 15) return 549;
+    if (duration <= 30) {
+      const additionalBlocks = Math.floor((duration - 15) / 5);
+      return 549 + (additionalBlocks * 90);
     }
+    // Beyond 30 minutes
+    const additionalBlocks = Math.floor((duration - 30) / 5);
+    return 999 + (additionalBlocks * 95);
   };
 
   const handleConfirm = () => {
