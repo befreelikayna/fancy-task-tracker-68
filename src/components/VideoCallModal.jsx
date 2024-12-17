@@ -49,7 +49,12 @@ const VideoCallModal = ({ isOpen, onClose }) => {
   };
 
   const getPriceForPlan = () => {
-    const duration = parseInt(state.selectedPlan.match(/\d+/)[0]);
+    if (!state.selectedPlan) return 0;
+    
+    const matches = state.selectedPlan.match(/\d+/);
+    if (!matches) return 0;
+    
+    const duration = parseInt(matches[0]);
     
     if (duration <= 10) return 299;
     if (duration <= 15) return 549;
