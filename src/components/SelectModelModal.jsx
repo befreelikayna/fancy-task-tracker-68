@@ -58,11 +58,11 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
             <CarouselContent>
               {model.images.map((image, index) => (
                 <CarouselItem key={index}>
-                  <div className="flex justify-center">
+                  <div className="flex justify-center items-center h-[400px]">
                     <img
                       src={image}
                       alt={`${model.name} ${index + 1}`}
-                      className="max-h-[80vh] w-auto object-contain rounded-lg"
+                      className="max-h-full max-w-full w-auto h-auto object-contain"
                     />
                   </div>
                 </CarouselItem>
@@ -86,11 +86,11 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
     }
 
     return (
-      <div className="flex justify-center">
+      <div className="flex justify-center items-center h-[400px]">
         <img
           src={model.image}
           alt={model.name}
-          className="max-h-[80vh] w-auto object-contain rounded-lg"
+          className="max-h-full max-w-full w-auto h-auto object-contain"
         />
       </div>
     );
@@ -98,7 +98,7 @@ const SelectModelModal = ({ isOpen, onClose, onSelect, selectedPlan }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] bg-gray-900 text-gray-100 border-gray-700">
+      <DialogContent className="sm:max-w-[600px] bg-gray-900 text-gray-100 border-gray-700">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-gray-100">Select Model</DialogTitle>
         </DialogHeader>
