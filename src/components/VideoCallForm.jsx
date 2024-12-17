@@ -25,7 +25,7 @@ const VideoCallForm = ({
   getPriceForPlan,
   handleConfirm
 }) => {
-  const [customDuration, setCustomDuration] = useState('');
+  const [customDuration, setCustomDuration] = useState('10');
 
   const handleCustomDurationChange = (e) => {
     const value = e.target.value;
@@ -33,7 +33,7 @@ const VideoCallForm = ({
       setCustomDuration(value);
       
       if (value === '') {
-        setSelectedPlan('');
+        setSelectedPlan('custom');
         return;
       }
 
@@ -42,9 +42,16 @@ const VideoCallForm = ({
         setSelectedPlan(`Video Call ${duration} Minutes`);
       } else if (duration !== 0) {
         toast.error("Duration must be in multiples of 5 minutes and minimum 10 minutes");
+        setSelectedPlan('custom');
       }
     }
   };
+
+  React.useEffect(() => {
+    if (selectedPlan === 'custom') {
+      setSelectedPlan(`Video Call ${customDuration} Minutes`);
+    }
+  }, []);
 
   return (
     <div className="grid gap-6 py-4">
@@ -74,7 +81,9 @@ const VideoCallForm = ({
           value={selectedPlan} 
           onValueChange={(value) => {
             setSelectedPlan(value);
-            setCustomDuration(value === 'custom' ? '10' : '');
+            if (value === 'custom') {
+              setCustomDuration('10');
+            }
           }}
         >
           <SelectTrigger className="bg-gray-800 text-gray-100 border-gray-700">
@@ -88,7 +97,7 @@ const VideoCallForm = ({
           </SelectContent>
         </Select>
 
-        {selectedPlan === 'custom' && (
+        {(selectedPlan === 'custom' || customDuration) && (
           <div className="space-y-2">
             <Label className="text-gray-300">Enter Duration (minutes)</Label>
             <Input
