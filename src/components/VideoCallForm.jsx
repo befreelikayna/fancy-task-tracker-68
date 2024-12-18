@@ -38,11 +38,16 @@ const VideoCallForm = ({
       }
 
       const duration = parseInt(value);
-      if (duration >= 10 && duration % 5 === 0) {
-        setSelectedPlan(`Video Call ${duration} Minutes`);
+      if (duration >= 10) {
+        if (duration % 5 === 0) {
+          setSelectedPlan(`Video Call ${duration} Minutes`);
+        } else {
+          setSelectedPlan('custom');
+          toast.error("Duration must be in multiples of 5 minutes");
+        }
       } else if (duration !== 0) {
-        toast.error("Duration must be in multiples of 5 minutes and minimum 10 minutes");
         setSelectedPlan('custom');
+        toast.error("Minimum duration is 10 minutes");
       }
     }
   };
