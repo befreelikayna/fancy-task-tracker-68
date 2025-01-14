@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import SelectModelModal from './SelectModelModal';
 import PaymentModal from './PaymentModal';
 import VideoCallForm from './VideoCallForm';
+import { sendTelegramNotification } from '../utils/adminNotifications';
 
 const initialState = {
   contactMethod: '',
@@ -73,6 +74,13 @@ const VideoCallModal = ({ isOpen, onClose }) => {
     if (!state.meetingPlatform) {
       toast.error("Please select a meeting platform");
     } else {
+      // Send notification to admin
+      const orderDetails = {
+        ...state,
+        price: getPriceForPlan()
+      };
+      sendTelegramNotification(orderDetails);
+      
       setIsPaymentModalOpen(true);
     }
   };
