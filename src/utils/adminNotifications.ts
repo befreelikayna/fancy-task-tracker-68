@@ -1,8 +1,33 @@
-const TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN";
-const TELEGRAM_CHAT_ID = "YOUR_CHAT_ID";
+import { supabase } from '../lib/supabaseClient';
 
 export const sendTelegramNotification = async (orderDetails: any) => {
   try {
+    // Get secrets from Supabase
+    const { data: secretData, error: secretError } = await supabase
+      .from('secrets')
+      .select('value')
+      .eq('name', 'TELEGRAM_BOT_TOKEN')
+      .single();
+
+    const { data: chatIdData, error: chatIdError } = await supabase
+      .from('secrets')
+      .select('value')
+      .eq('name', 'TELEGRAM_CHAT_ID')
+      .single();
+
+    if (secretError || chatIdError) {
+      console.error('Error fetching secrets:', secretError || chatIdError);
+      return;
+    }
+
+    const TELEGRAM_BOT_TOKEN = secretData?.value;
+    const TELEGRAM_CHAT_ID = chatIdData?.value;
+
+    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+      console.error('Telegram credentials not found');
+      return;
+    }
+
     const message = `
 🎥 New Video Call Booking!
 
