@@ -42,11 +42,9 @@ const VideoCallForm = ({
         if (duration % 5 === 0) {
           setSelectedPlan(`Video Call ${duration} Minutes`);
         } else {
-          setSelectedPlan('custom');
           toast.error("Duration must be in multiples of 5 minutes");
         }
       } else if (duration !== 0) {
-        setSelectedPlan('custom');
         toast.error("Minimum duration is 10 minutes");
       }
     }
@@ -174,7 +172,12 @@ const VideoCallForm = ({
         </div>
       </div>
       
-      {selectedPlan && <p className="text-gray-300">Price: ₹{getPriceForPlan()}</p>}
+      {selectedPlan && (
+        <div className="space-y-2">
+          <p className="text-gray-300">Selected Duration: {customDuration ? `${customDuration} Minutes` : selectedPlan}</p>
+          <p className="text-gray-300">Price: ₹{getPriceForPlan()}</p>
+        </div>
+      )}
       
       <Button 
         onClick={handleConfirm}
