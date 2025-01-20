@@ -43,6 +43,41 @@ const GroupModal = ({ isOpen, onClose }) => {
     }
   };
 
+  const groupDescriptions = {
+    'Premium Group': (
+      <ul className="list-disc pl-4 space-y-2 text-gray-300 text-sm">
+        <li>Content: 100+ daily videos</li>
+        <li>Duration: Videos up to 20 minutes long</li>
+        <li>Bonus: Lifetime access to a 100GB Mega Collection on G-Drive</li>
+      </ul>
+    ),
+    'Exclusive Group': (
+      <ul className="list-disc pl-4 space-y-2 text-gray-300 text-sm">
+        <li>Content: 250+ daily videos</li>
+        <li>Duration: Videos up to 1 hour+ long</li>
+        <li>Perks:</li>
+        <ul className="list-disc pl-4 space-y-1">
+          <li>Free 30-minute video call on a 6-month plan</li>
+          <li>Lifetime access to a 100GB Mega Collection on G-Drive</li>
+        </ul>
+      </ul>
+    ),
+    'Real Cam CCTV Group': (
+      <ul className="list-disc pl-4 space-y-2 text-gray-300 text-sm">
+        <li>Content:</li>
+        <ul className="list-disc pl-4 space-y-1">
+          <li>Exclusive premium content from RLC</li>
+          <li>Live couple and guest S*X videos</li>
+          <li>Videos from 4 angles with longer durations</li>
+        </ul>
+        <li>Perks:</li>
+        <ul className="list-disc pl-4">
+          <li>Includes access to Premium and Exclusive groups for 2 months on a lifetime membership</li>
+        </ul>
+      </ul>
+    )
+  };
+
   const handleGroupSelect = (group) => {
     setSelectedGroup(group);
     setStep(2);
@@ -78,22 +113,23 @@ const GroupModal = ({ isOpen, onClose }) => {
           {step === 1 ? (
             <div className="flex flex-col gap-4">
               {Object.keys(groupPricing).map((group) => (
-                <Button
-                  key={group}
-                  onClick={() => handleGroupSelect(group)}
-                  className="bg-gray-800 hover:bg-gray-700 text-gray-100 transform transition-all duration-200 hover:scale-105"
-                >
-                  {group}
-                </Button>
+                <div key={group} className="space-y-2">
+                  <Button
+                    onClick={() => handleGroupSelect(group)}
+                    className="w-full bg-gray-800 hover:bg-gray-700 text-gray-100 transform transition-all duration-200 hover:scale-105"
+                  >
+                    {group}
+                  </Button>
+                  {groupDescriptions[group]}
+                </div>
               ))}
             </div>
           ) : (
             <div className="grid gap-6 py-4">
               <Button
-                onClick={() => window.open('https://t.me/demo_group', '_blank')}
                 className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg transform transition-all duration-200 hover:scale-105 animate-pulse shadow-lg"
               >
-                Join Demo Group
+                Suprise Gift On Any Purchase
               </Button>
 
               <Input
