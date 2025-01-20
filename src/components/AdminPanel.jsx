@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const AdminPanel = ({ isOpen, onClose }) => {
   const [logs, setLogs] = useState([]);
@@ -12,12 +14,27 @@ const AdminPanel = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
+  const handleClearLogs = () => {
+    localStorage.setItem('adminLogs', '[]');
+    setLogs([]);
+    toast.success("Logs cleared successfully");
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] bg-gray-900 text-gray-100 border-gray-700">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-gray-100">Admin Panel</DialogTitle>
         </DialogHeader>
+        <div className="mb-4">
+          <Button 
+            onClick={handleClearLogs}
+            variant="destructive"
+            className="w-full"
+          >
+            Clear Logs
+          </Button>
+        </div>
         <ScrollArea className="h-[500px] w-full rounded-md border p-4">
           {logs.map((log, index) => (
             <div key={index} className="mb-4 p-4 bg-gray-800 rounded-lg">
