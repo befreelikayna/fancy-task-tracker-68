@@ -6,7 +6,7 @@ export const sendTelegramNotification = (orderDetails) => {
   
   // Add new log
   const newLog = {
-    type: orderDetails.selectedPlan ? 'Video Call' : 'Group Order',
+    type: orderDetails.planName ? (orderDetails.planName.includes('Video Call') ? 'Video Call' : 'Group Order') : 'Unknown',
     details: orderDetails,
     timestamp: new Date().toISOString()
   };

@@ -18,6 +18,16 @@ const AdminPanel = ({ isOpen, onClose, logs }) => {
                   {JSON.stringify(log.details, null, 2)}
                 </pre>
               </div>
+              {log.details.paymentScreenshot && (
+                <div className="mt-4">
+                  <p className="text-sm font-semibold text-gray-300 mb-2">Payment Screenshot:</p>
+                  <img 
+                    src={log.details.paymentScreenshot} 
+                    alt="Payment Screenshot" 
+                    className="max-w-full h-auto rounded-lg"
+                  />
+                </div>
+              )}
               <div className="text-xs text-gray-400 mt-2">
                 {new Date(log.timestamp).toLocaleString()}
               </div>
