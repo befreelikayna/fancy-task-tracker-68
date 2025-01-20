@@ -1,8 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-const AdminPanel = ({ isOpen, onClose, logs }) => {
+const AdminPanel = ({ isOpen, onClose }) => {
+  const [logs, setLogs] = useState([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      const storedLogs = JSON.parse(localStorage.getItem('adminLogs') || '[]');
+      setLogs(storedLogs);
+    }
+  }, [isOpen]);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] bg-gray-900 text-gray-100 border-gray-700">

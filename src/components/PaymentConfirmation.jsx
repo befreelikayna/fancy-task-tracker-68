@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { sendTelegramNotification } from '../utils/adminNotifications';
+import { downloadInvoice } from '../utils/invoiceGenerator';
 
 const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
   const [screenshot, setScreenshot] = useState(null);
@@ -38,11 +38,25 @@ const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
         timestamp: new Date().toISOString()
       };
 
-      // Send to admin notifications
-      sendTelegramNotification(updatedOrderDetails);
+      // Store in localStorage for admin panel
+      const existingLogs = JSON.parse(localStorage.getItem('adminLogs') || '[]');
+      const newLog = {
+        type: updatedOrderDetails.planName ? 
+          (updatedOrderDetails.planName.includes('Video Call') ? 'Video Call' : 'Group Order') 
+          : 'Unknown',
+        details: updatedOrderDetails,
+        timestamp: new Date().toISOString()
+      };
+      
+      existingLogs.unshift(newLog);
+      localStorage.setItem('adminLogs', JSON.stringify(existingLogs));
       
       setIsSubmitting(false);
       toast.success("Order placed successfully! You will receive confirmation soon.");
+      
+      // Download invoice
+      downloadInvoice(updatedOrderDetails);
+      
       onClose();
     };
 
