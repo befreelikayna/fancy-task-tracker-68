@@ -5,20 +5,51 @@ import LiveBackground from '../components/LiveBackground';
 import VideoCallModal from '../components/VideoCallModal';
 import GroupModal from '../components/GroupModal';
 import ComingSoonModal from '../components/ComingSoonModal';
+import AdminLogin from '../components/AdminLogin';
+import AdminPanel from '../components/AdminPanel';
 
 const Index = () => {
   const [isVideoCallModalOpen, setIsVideoCallModalOpen] = useState(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [isComingSoonModalOpen, setIsComingSoonModalOpen] = useState(false);
+  const [profileClickCount, setProfileClickCount] = useState(0);
+  const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
+  const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [logs, setLogs] = useState([]);
 
   useEffect(() => {
     document.title = "Ankita Sharma's Dashboard";
   }, []);
 
+  useEffect(() => {
+    if (profileClickCount === 5) {
+      setIsAdminLoginOpen(true);
+      setProfileClickCount(0);
+    }
+  }, [profileClickCount]);
+
+  // Load logs from localStorage when component mounts
+  useEffect(() => {
+    const storedLogs = localStorage.getItem('adminLogs');
+    if (storedLogs) {
+      setLogs(JSON.parse(storedLogs));
+    }
+  }, []);
+
+  const handleProfileClick = () => {
+    setProfileClickCount(prev => prev + 1);
+  };
+
+  const handleAdminLogin = () => {
+    setIsAdmin(true);
+    setIsAdminPanelOpen(true);
+  };
+
   const buttons = [
     { name: "Video Call", icon: "📹", price: 999, onClick: () => setIsVideoCallModalOpen(true) },
     { name: "Groups", icon: "👥", price: 499, onClick: () => setIsGroupModalOpen(true) },
-    { name: "MeetUP", icon: "🤝", price: 1499, onClick: () => setIsComingSoonModalOpen(true) },
+    { name: "MeetUP", icon: "🎥", price: 1499, onClick: () => setIsComingSoonModalOpen(true) },
     { name: "Custom Video Call", icon: "🎥", price: 1999, onClick: () => setIsComingSoonModalOpen(true) },
   ];
 
@@ -35,7 +66,8 @@ const Index = () => {
           <img 
             src="/AnkitaSharma.png" 
             alt="Ankita Sharma" 
-            className="w-32 h-32 rounded-full object-cover mb-4"
+            className="w-32 h-32 rounded-full object-cover mb-4 cursor-pointer"
+            onClick={handleProfileClick}
           />
           <h1 className="text-4xl sm:text-6xl font-bold mb-4 shadow-text text-center flex items-center">
             Ankita Sharma
@@ -68,6 +100,16 @@ const Index = () => {
       <VideoCallModal isOpen={isVideoCallModalOpen} onClose={() => setIsVideoCallModalOpen(false)} />
       <GroupModal isOpen={isGroupModalOpen} onClose={() => setIsGroupModalOpen(false)} />
       <ComingSoonModal isOpen={isComingSoonModalOpen} onClose={() => setIsComingSoonModalOpen(false)} />
+      <AdminLogin 
+        isOpen={isAdminLoginOpen} 
+        onClose={() => setIsAdminLoginOpen(false)}
+        onLogin={handleAdminLogin}
+      />
+      <AdminPanel 
+        isOpen={isAdminPanelOpen} 
+        onClose={() => setIsAdminPanelOpen(false)}
+        logs={logs}
+      />
     </div>
   );
 };
