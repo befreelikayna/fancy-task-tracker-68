@@ -4,15 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { downloadInvoice } from '../utils/invoiceGenerator';
+import { useNavigate } from 'react-router-dom';
 
 const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
   const [screenshot, setScreenshot] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      if (file.size > 5 * 1024 * 1024) {
         toast.error("File size should be less than 5MB");
         return;
       }
@@ -28,7 +30,6 @@ const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
 
     setIsSubmitting(true);
     
-    // Convert screenshot to base64 for storage
     const reader = new FileReader();
     reader.onloadend = () => {
       const updatedOrderDetails = {
@@ -38,7 +39,6 @@ const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
         timestamp: new Date().toISOString()
       };
 
-      // Store in localStorage for admin panel
       const existingLogs = JSON.parse(localStorage.getItem('adminLogs') || '[]');
       const newLog = {
         type: updatedOrderDetails.planName ? 
@@ -54,10 +54,11 @@ const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
       setIsSubmitting(false);
       toast.success("Order placed successfully! You will receive confirmation soon.");
       
-      // Download invoice
       downloadInvoice(updatedOrderDetails);
       
+      // Close all modals and navigate to home
       onClose();
+      navigate('/');
     };
 
     reader.readAsDataURL(screenshot);
