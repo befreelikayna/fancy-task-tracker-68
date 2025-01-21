@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const BIN_ID = '65f9c2c8266cfc3fde8f5c11'; // Created a new bin for this project
-const API_KEY = '$2a$10$Hs/vXZqHBnwxZNVGZk.YAOYGkGCpVSVJHHFPQQ4AzlvL1h8MrBgwi'; // Read-write key
+const BIN_ID = '678f7e48acd3cb34a8d07586'; // Your provided Bin ID
+const API_KEY = '$2a$10$7Z1HP1uojIMUBg.u2HtYI.VKp1QN2J6bIgwnzh0PeE4O8UqLsQ3Se'; // Your provided API key
 const BASE_URL = 'https://api.jsonbin.io/v3/b';
 
 export const fetchLogs = async () => {
