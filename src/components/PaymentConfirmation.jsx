@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { downloadInvoice } from '../utils/invoiceGenerator';
 import { useNavigate } from 'react-router-dom';
+import { fetchLogs, updateLogs } from '../utils/jsonBinService';
 
 const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
   const [screenshot, setScreenshot] = useState(null);
@@ -22,7 +23,7 @@ const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!screenshot) {
       toast.error("Please upload payment screenshot");
       return;
@@ -31,7 +32,7 @@ const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
     setIsSubmitting(true);
     
     const reader = new FileReader();
-    reader.onloadend = () => {
+    reader.onloadend = async () => {
       const updatedOrderDetails = {
         ...orderDetails,
         paymentScreenshot: reader.result,
@@ -39,26 +40,38 @@ const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
         timestamp: new Date().toISOString()
       };
 
-      const existingLogs = JSON.parse(localStorage.getItem('adminLogs') || '[]');
-      const newLog = {
-        type: updatedOrderDetails.planName ? 
-          (updatedOrderDetails.planName.includes('Video Call') ? 'Video Call' : 'Group Order') 
-          : 'Unknown',
-        details: updatedOrderDetails,
-        timestamp: new Date().toISOString()
-      };
-      
-      existingLogs.unshift(newLog);
-      localStorage.setItem('adminLogs', JSON.stringify(existingLogs));
-      
-      setIsSubmitting(false);
-      toast.success("Order placed successfully! You will receive confirmation soon.");
-      
-      downloadInvoice(updatedOrderDetails);
-      
-      // Close all modals and navigate to home
-      onClose();
-      navigate('/');
+      try {
+        // Fetch existing logs
+        const existingLogs = await fetchLogs();
+        
+        // Create new log entry
+        const newLog = {
+          type: updatedOrderDetails.planName ? 
+            (updatedOrderDetails.planName.includes('Video Call') ? 'Video Call' : 'Group Order') 
+            : 'Unknown',
+          details: updatedOrderDetails,
+          timestamp: new Date().toISOString()
+        };
+        
+        // Add new log to the beginning of the array
+        existingLogs.unshift(newLog);
+        
+        // Update logs in JSONBin
+        await updateLogs(existingLogs);
+        
+        setIsSubmitting(false);
+        toast.success("Order placed successfully! You will receive confirmation soon.");
+        
+        downloadInvoice(updatedOrderDetails);
+        
+        // Close all modals and navigate to home
+        onClose();
+        navigate('/');
+      } catch (error) {
+        console.error('Error saving log:', error);
+        toast.error("Failed to save order details");
+        setIsSubmitting(false);
+      }
     };
 
     reader.readAsDataURL(screenshot);

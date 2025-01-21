@@ -3,21 +3,33 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { fetchLogs, updateLogs } from '../utils/jsonBinService';
 
 const AdminPanel = ({ isOpen, onClose }) => {
   const [logs, setLogs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (isOpen) {
-      const storedLogs = JSON.parse(localStorage.getItem('adminLogs') || '[]');
-      setLogs(storedLogs);
+      loadLogs();
     }
   }, [isOpen]);
 
-  const handleClearLogs = () => {
-    localStorage.setItem('adminLogs', '[]');
-    setLogs([]);
-    toast.success("Logs cleared successfully");
+  const loadLogs = async () => {
+    setIsLoading(true);
+    const fetchedLogs = await fetchLogs();
+    setLogs(fetchedLogs);
+    setIsLoading(false);
+  };
+
+  const handleClearLogs = async () => {
+    try {
+      await updateLogs([]);
+      setLogs([]);
+      toast.success("Logs cleared successfully");
+    } catch (error) {
+      toast.error("Failed to clear logs");
+    }
   };
 
   return (
@@ -36,33 +48,41 @@ const AdminPanel = ({ isOpen, onClose }) => {
           </Button>
         </div>
         <ScrollArea className="h-[500px] w-full rounded-md border p-4">
-          {logs.map((log, index) => (
-            <div key={index} className="mb-4 p-4 bg-gray-800 rounded-lg">
-              <div className="font-bold text-purple-400">Order Type: {log.type}</div>
-              <div className="text-sm text-gray-300 mt-2">
-                <pre className="whitespace-pre-wrap">
-                  {JSON.stringify(log.details, null, 2)}
-                </pre>
-              </div>
-              {log.details.paymentScreenshot && (
-                <div className="mt-4">
-                  <p className="text-sm font-semibold text-gray-300 mb-2">Payment Screenshot:</p>
-                  <img 
-                    src={log.details.paymentScreenshot} 
-                    alt="Payment Screenshot" 
-                    className="max-w-full h-auto rounded-lg"
-                  />
+          {isLoading ? (
+            <div className="text-center text-gray-400 mt-4">
+              Loading logs...
+            </div>
+          ) : (
+            <>
+              {logs.map((log, index) => (
+                <div key={index} className="mb-4 p-4 bg-gray-800 rounded-lg">
+                  <div className="font-bold text-purple-400">Order Type: {log.type}</div>
+                  <div className="text-sm text-gray-300 mt-2">
+                    <pre className="whitespace-pre-wrap">
+                      {JSON.stringify(log.details, null, 2)}
+                    </pre>
+                  </div>
+                  {log.details.paymentScreenshot && (
+                    <div className="mt-4">
+                      <p className="text-sm font-semibold text-gray-300 mb-2">Payment Screenshot:</p>
+                      <img 
+                        src={log.details.paymentScreenshot} 
+                        alt="Payment Screenshot" 
+                        className="max-w-full h-auto rounded-lg"
+                      />
+                    </div>
+                  )}
+                  <div className="text-xs text-gray-400 mt-2">
+                    {new Date(log.timestamp).toLocaleString()}
+                  </div>
+                </div>
+              ))}
+              {logs.length === 0 && (
+                <div className="text-center text-gray-400 mt-4">
+                  No logs available
                 </div>
               )}
-              <div className="text-xs text-gray-400 mt-2">
-                {new Date(log.timestamp).toLocaleString()}
-              </div>
-            </div>
-          ))}
-          {logs.length === 0 && (
-            <div className="text-center text-gray-400 mt-4">
-              No logs available
-            </div>
+            </>
           )}
         </ScrollArea>
       </DialogContent>
