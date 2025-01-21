@@ -9,11 +9,12 @@ export const fetchLogs = async () => {
     console.log('Fetching logs from JSONBin...');
     const response = await axios.get(`${BASE_URL}/${BIN_ID}/latest`, {
       headers: {
-        'X-Master-Key': API_KEY
+        'X-Master-Key': API_KEY,
+        'X-Bin-Meta': false
       }
     });
-    console.log('Logs fetched successfully:', response.data.record);
-    return response.data.record || [];
+    console.log('Logs fetched successfully:', response.data);
+    return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error('Error fetching logs:', error);
     return [];
@@ -23,13 +24,15 @@ export const fetchLogs = async () => {
 export const updateLogs = async (logs) => {
   try {
     console.log('Updating logs in JSONBin...');
-    await axios.put(`${BASE_URL}/${BIN_ID}`, logs, {
+    const response = await axios.put(`${BASE_URL}/${BIN_ID}`, logs, {
       headers: {
         'Content-Type': 'application/json',
-        'X-Master-Key': API_KEY
+        'X-Master-Key': API_KEY,
+        'X-Bin-Versioning': false
       }
     });
-    console.log('Logs updated successfully');
+    console.log('Logs updated successfully:', response.data);
+    return response.data;
   } catch (error) {
     console.error('Error updating logs:', error);
     throw error;

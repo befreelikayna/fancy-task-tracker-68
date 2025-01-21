@@ -16,18 +16,28 @@ const AdminPanel = ({ isOpen, onClose }) => {
   }, [isOpen]);
 
   const loadLogs = async () => {
-    setIsLoading(true);
-    const fetchedLogs = await fetchLogs();
-    setLogs(fetchedLogs);
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      console.log('Loading logs...');
+      const fetchedLogs = await fetchLogs();
+      console.log('Fetched logs:', fetchedLogs);
+      setLogs(Array.isArray(fetchedLogs) ? fetchedLogs : []);
+    } catch (error) {
+      console.error('Error loading logs:', error);
+      toast.error("Failed to load logs");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleClearLogs = async () => {
     try {
+      console.log('Clearing logs...');
       await updateLogs([]);
       setLogs([]);
       toast.success("Logs cleared successfully");
     } catch (error) {
+      console.error('Error clearing logs:', error);
       toast.error("Failed to clear logs");
     }
   };
