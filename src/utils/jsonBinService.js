@@ -32,5 +32,6 @@ export const updateLogs = async (logs) => {
     console.log('Logs updated successfully');
   } catch (error) {
     console.error('Error updating logs:', error);
+    throw error;
   }
 };
