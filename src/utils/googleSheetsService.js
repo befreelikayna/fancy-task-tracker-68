@@ -11,7 +11,7 @@ async function getAccessToken() {
     const now = Math.floor(Date.now() / 1000);
     const oneHour = 60 * 60;
 
-    // Create the JWT claim
+    // Create the JWT claim with the correct format for Google OAuth
     const claim = {
       iss: CLIENT_EMAIL,
       scope: 'https://www.googleapis.com/auth/spreadsheets',
@@ -20,9 +20,11 @@ async function getAccessToken() {
       iat: now
     };
 
-    // Sign the JWT with the private key
+    // Format private key correctly
     const privateKey = PRIVATE_KEY.replace(/\\n/g, '\n');
-    const assertion = jwt(claim, privateKey, { algorithm: 'RS256' });
+
+    // Create JWT token with RS256 algorithm
+    const assertion = jwt(claim, privateKey, { algorithm: 'RS256', header: { alg: 'RS256', typ: 'JWT' } });
 
     console.log('JWT created, requesting access token...');
 
