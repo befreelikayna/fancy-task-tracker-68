@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { downloadInvoice } from '../utils/invoiceGenerator';
 import { useNavigate } from 'react-router-dom';
 import { fetchLogs, updateLogs } from '../utils/jsonBinService';
+import { logOrderToGoogleSheet } from '../utils/googleSheetsService';
 
 const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
   const [screenshot, setScreenshot] = useState(null);
@@ -41,10 +42,8 @@ const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
       };
 
       try {
-        // Fetch existing logs
+        // Log to JSONBin
         const existingLogs = await fetchLogs();
-        
-        // Create new log entry
         const newLog = {
           type: updatedOrderDetails.planName ? 
             (updatedOrderDetails.planName.includes('Video Call') ? 'Video Call' : 'Group Order') 
@@ -52,19 +51,24 @@ const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
           details: updatedOrderDetails,
           timestamp: new Date().toISOString()
         };
-        
-        // Add new log to the beginning of the array
         existingLogs.unshift(newLog);
-        
-        // Update logs in JSONBin
         await updateLogs(existingLogs);
+
+        // Log to Google Sheets
+        try {
+          await logOrderToGoogleSheet(updatedOrderDetails);
+          console.log('Successfully logged to Google Sheets');
+        } catch (error) {
+          console.error('Failed to log to Google Sheets:', error);
+          // Don't block the order process if Google Sheets logging fails
+          toast.error("Note: Failed to log to backup system");
+        }
         
         setIsSubmitting(false);
         toast.success("Order placed successfully! You will receive confirmation soon.");
         
         downloadInvoice(updatedOrderDetails);
         
-        // Close all modals and navigate to home
         onClose();
         navigate('/');
       } catch (error) {
