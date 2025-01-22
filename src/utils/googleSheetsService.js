@@ -23,8 +23,15 @@ async function getAccessToken() {
     // Format private key correctly
     const privateKey = PRIVATE_KEY.replace(/\\n/g, '\n');
 
-    // Create JWT token with RS256 algorithm
-    const assertion = jwt(claim, privateKey, { algorithm: 'RS256', header: { alg: 'RS256', typ: 'JWT' } });
+    // Create JWT token with RS256 algorithm and proper headers
+    const assertion = jwt(claim, privateKey, { 
+      algorithm: 'RS256', 
+      header: { 
+        alg: 'RS256', 
+        typ: 'JWT',
+        kid: undefined 
+      } 
+    });
 
     console.log('JWT created, requesting access token...');
 
