@@ -1,10 +1,9 @@
 import axios from 'axios';
 
-const BIN_ID = '678f7e48acd3cb34a8d07586'; // Your provided Bin ID
-const API_KEY = '$2a$10$7Z1HP1uojIMUBg.u2HtYI.VKp1QN2J6bIgwnzh0PeE4O8UqLsQ3Se'; // Your provided API key
+const BIN_ID = '678f7e48acd3cb34a8d07586';
+const API_KEY = '$2a$10$7Z1HP1uojIMUBg.u2HtYI.VKp1QN2J6bIgwnzh0PeE4O8UqLsQ3Se';
 const BASE_URL = 'https://api.jsonbin.io/v3/b';
 
-// Fetch logs from JSONBin
 export const fetchLogs = async () => {
   try {
     console.log('Fetching logs from JSONBin...');
@@ -24,16 +23,12 @@ export const fetchLogs = async () => {
   }
 };
 
-// Append a new log and update JSONBin
-export const addLog = async (newLog) => {
+export const updateLogs = async (logs) => {
   try {
-    console.log('Appending new log...');
-    const currentLogs = await fetchLogs(); // Fetch existing logs
-    const updatedLogs = [...currentLogs, { message: newLog, timestamp: new Date().toISOString() }];
-
+    console.log('Updating logs in JSONBin...');
     const response = await axios.put(
       `${BASE_URL}/${BIN_ID}`,
-      { logs: updatedLogs }, // Update JSONBin with all logs
+      logs,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -42,8 +37,7 @@ export const addLog = async (newLog) => {
         },
       }
     );
-
-    console.log('Log added successfully:', response.data);
+    console.log('Logs updated successfully:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error updating logs:', error);
