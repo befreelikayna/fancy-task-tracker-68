@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { downloadInvoice } from '../utils/invoiceGenerator';
 import { useNavigate } from 'react-router-dom';
-import { fetchLogs, updateLogs } from '../utils/jsonBinService';
 import { logOrderToGoogleSheet } from '../utils/googleSheetsService';
 
 const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
@@ -42,26 +41,6 @@ const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
       };
 
       try {
-        // Log to JSONBin
-        console.log('Fetching existing logs...');
-        const existingLogs = await fetchLogs();
-        console.log('Existing logs:', existingLogs);
-        
-        const newLog = {
-          type: updatedOrderDetails.planName ? 
-            (updatedOrderDetails.planName.includes('Video Call') ? 'Video Call' : 'Group Order') 
-            : 'Unknown',
-          details: updatedOrderDetails,
-          timestamp: new Date().toISOString()
-        };
-        
-        console.log('Adding new log:', newLog);
-        existingLogs.unshift(newLog);
-        
-        console.log('Updating JSONBin with new logs...');
-        await updateLogs(existingLogs);
-        console.log('JSONBin update successful');
-
         // Log to Google Sheets
         console.log('Logging to Google Sheets...');
         await logOrderToGoogleSheet(updatedOrderDetails);
