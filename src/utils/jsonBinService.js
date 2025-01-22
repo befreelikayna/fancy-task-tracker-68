@@ -14,7 +14,12 @@ export const fetchLogs = async () => {
       }
     });
     console.log('Logs fetched successfully:', response.data);
-    return Array.isArray(response.data) ? response.data : [];
+    
+    // Handle both cases: when data is directly an array or when it's in the record field
+    const logs = Array.isArray(response.data) ? response.data : 
+                 (response.data.record ? response.data.record : []);
+    
+    return logs;
   } catch (error) {
     console.error('Error fetching logs:', error);
     return [];
