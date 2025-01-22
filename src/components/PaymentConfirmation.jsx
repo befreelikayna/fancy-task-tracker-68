@@ -43,7 +43,10 @@ const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
 
       try {
         // Log to JSONBin
+        console.log('Fetching existing logs...');
         const existingLogs = await fetchLogs();
+        console.log('Existing logs:', existingLogs);
+        
         const newLog = {
           type: updatedOrderDetails.planName ? 
             (updatedOrderDetails.planName.includes('Video Call') ? 'Video Call' : 'Group Order') 
@@ -51,18 +54,18 @@ const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
           details: updatedOrderDetails,
           timestamp: new Date().toISOString()
         };
+        
+        console.log('Adding new log:', newLog);
         existingLogs.unshift(newLog);
+        
+        console.log('Updating JSONBin with new logs...');
         await updateLogs(existingLogs);
+        console.log('JSONBin update successful');
 
         // Log to Google Sheets
-        try {
-          await logOrderToGoogleSheet(updatedOrderDetails);
-          console.log('Successfully logged to Google Sheets');
-        } catch (error) {
-          console.error('Failed to log to Google Sheets:', error);
-          // Don't block the order process if Google Sheets logging fails
-          toast.error("Note: Failed to log to backup system");
-        }
+        console.log('Logging to Google Sheets...');
+        await logOrderToGoogleSheet(updatedOrderDetails);
+        console.log('Google Sheets logging successful');
         
         setIsSubmitting(false);
         toast.success("Order placed successfully! You will receive confirmation soon.");
@@ -72,9 +75,9 @@ const PaymentConfirmation = ({ isOpen, onClose, orderDetails }) => {
         onClose();
         navigate('/');
       } catch (error) {
-        console.error('Error saving log:', error);
-        toast.error("Failed to save order details");
+        console.error('Error processing order:', error);
         setIsSubmitting(false);
+        toast.error("Failed to save order details. Please try again.");
       }
     };
 

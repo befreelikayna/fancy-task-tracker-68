@@ -14,7 +14,7 @@ export const fetchLogs = async () => {
       },
     });
 
-    const logs = Array.isArray(response.data) ? response.data : response.data.record || [];
+    const logs = Array.isArray(response.data) ? response.data : [];
     console.log('Logs fetched successfully:', logs);
     return logs;
   } catch (error) {

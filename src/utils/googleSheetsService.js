@@ -27,7 +27,7 @@ export const logOrderToGoogleSheet = async (orderDetails) => {
 
     const response = await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Sheet1!A:D', // Assumes first sheet with columns A-D
+      range: 'Sheet1!A:D',
       valueInputOption: 'RAW',
       requestBody: {
         values,
