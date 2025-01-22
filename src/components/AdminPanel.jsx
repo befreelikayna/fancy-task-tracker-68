@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { fetchLogs, updateLogs } from '../utils/jsonBinService';
 
 const AdminPanel = ({ isOpen, onClose }) => {
   const [logs, setLogs] = useState([]);
@@ -18,10 +17,10 @@ const AdminPanel = ({ isOpen, onClose }) => {
   const loadLogs = async () => {
     try {
       setIsLoading(true);
-      console.log('Loading logs...');
-      const fetchedLogs = await fetchLogs();
-      console.log('Fetched logs:', fetchedLogs);
-      setLogs(Array.isArray(fetchedLogs) ? fetchedLogs : []);
+      console.log('Loading logs from localStorage...');
+      const storedLogs = JSON.parse(localStorage.getItem('adminLogs') || '[]');
+      console.log('Fetched logs:', storedLogs);
+      setLogs(Array.isArray(storedLogs) ? storedLogs : []);
     } catch (error) {
       console.error('Error loading logs:', error);
       toast.error("Failed to load logs");
@@ -33,7 +32,7 @@ const AdminPanel = ({ isOpen, onClose }) => {
   const handleClearLogs = async () => {
     try {
       console.log('Clearing logs...');
-      await updateLogs([]);
+      localStorage.setItem('adminLogs', '[]');
       setLogs([]);
       toast.success("Logs cleared successfully");
     } catch (error) {
