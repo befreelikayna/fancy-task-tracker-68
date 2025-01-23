@@ -46,11 +46,27 @@ const Index = () => {
     setIsAdminPanelOpen(true);
   };
 
+  const TransparentButton = ({ icon, name, onClick }) => (
+    <Button
+      className="w-full text-lg py-6 bg-transparent backdrop-blur-sm text-white border border-white/20 
+                 rounded-full transition-all duration-300 ease-in-out transform 
+                 hover:scale-105 hover:border-gold-shimmer hover:shadow-gold-flare
+                 hover:bg-white/5 relative overflow-hidden
+                 before:absolute before:inset-0 before:-translate-x-full
+                 before:animate-shimmer before:bg-gradient-to-r
+                 before:from-transparent before:via-white/10 before:to-transparent"
+      onClick={onClick}
+    >
+      <span className="mr-2">{icon}</span>
+      {name}
+    </Button>
+  );
+
   const buttons = [
-    { name: "Video Call", icon: "📹", price: 999, onClick: () => setIsVideoCallModalOpen(true) },
-    { name: "Groups", icon: "👥", price: 499, onClick: () => setIsGroupModalOpen(true) },
-    { name: "MeetUP", icon: "🎥", price: 1499, onClick: () => setIsComingSoonModalOpen(true) },
-    { name: "Custom Video Call", icon: "🎥", price: 1999, onClick: () => setIsComingSoonModalOpen(true) },
+    { name: "Video Call", icon: "📹", onClick: () => setIsVideoCallModalOpen(true) },
+    { name: "Groups", icon: "👥", onClick: () => setIsGroupModalOpen(true) },
+    { name: "MeetUP", icon: "🎥", onClick: () => setIsComingSoonModalOpen(true) },
+    { name: "Custom Video Call", icon: "🎥", onClick: () => setIsComingSoonModalOpen(true) },
   ];
 
   return (
@@ -86,14 +102,12 @@ const Index = () => {
         
         <div className="w-full max-w-md flex flex-col items-center space-y-4">
           {buttons.map((button, index) => (
-            <Button
+            <TransparentButton
               key={index}
-              className="w-full text-lg py-6 bg-transparent text-white rounded-full border border-gold-shimmer transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-gold-flare"
+              icon={button.icon}
+              name={button.name}
               onClick={button.onClick}
-            >
-              <span className="mr-2">{button.icon}</span>
-              {button.name}
-            </Button>
+            />
           ))}
         </div>
       </div>
