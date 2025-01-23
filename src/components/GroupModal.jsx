@@ -152,7 +152,7 @@ const GroupModal = ({ isOpen, onClose }) => {
                         contactMethod === method ? 'ring-2 ring-blue-500' : ''
                       }`}
                     >
-                      <img src={`/${method}.png`} alt={method} className="w-8 h-8 mx-auto object-cover" />
+                      <img src={`/public/${method.toLowerCase()}.png`} alt={method} className="w-8 h-8 mx-auto object-cover" />
                     </Button>
                   ))}
                 </div>
